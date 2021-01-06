@@ -5,7 +5,8 @@
 
         <v-layout row>
           <v-flex xs12 class="secondary pl-4 py-5 mb-4">
-            <v-icon class="success--text mr-2">mdi-calculator</v-icon>
+            <v-icon v-if="id === '0'" class="success--text mr-2">mdi-calculator</v-icon>
+            <v-icon @click="nome = custo.nome; dialog3 = true" v-else class="primary--text mr-2">mdi-pencil-outline</v-icon>
             <strong class="success--text">{{ titulo }}</strong>
           </v-flex>
         </v-layout>
@@ -352,7 +353,7 @@
           </v-dialog>
         </template>
 
-<template>
+        <template>
           <v-dialog
             v-model="dialog2"
             scrollable
@@ -395,6 +396,49 @@
           </v-dialog>
         </template>
 
+        <template>
+          <v-dialog
+            v-model="dialog3"
+            scrollable
+            persistent
+            :overlay="false"
+            max-width="300px"
+            transition="dialog-transition"
+          >
+            <v-card>
+              <v-card-title primary-title>
+                Alterar nome
+              </v-card-title>
+              <v-card-text>
+                <v-text-field
+                  color="success"
+                  name="nome"
+                  label="Nome do custo"
+                  id="nome"
+                  v-model="nome"
+                  type="text"
+                  :rules="rules"
+                  counter="95"
+                  max="95"
+                  required
+                ></v-text-field>
+              </v-card-text>
+              <v-card-actions>
+                <v-btn
+                  color="warning"
+                  text
+                  @click="nome = ''; dialog3 = false"
+                >Cancelar</v-btn>
+                <v-btn
+                  color="success"
+                  text
+                  @click="dialog3 = false; editarNome()"
+                >Alterar</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </template>
+
           <v-snackbar
             v-model="snackbar"
             :timeout="5000"
@@ -418,6 +462,7 @@ export default {
     return {
       dialog: false,
       dialog2: false,
+      dialog3: false,
       nome: '',
       itemAlterar: [],
       btn: 'new',
@@ -682,6 +727,17 @@ export default {
         custo.id = this.id
         this.$store.dispatch('updatecusto', custo)
       }
+    },
+    editarNome () {
+      if (this.id === '0') {
+        return
+      }
+      const custo = {
+        id: this.id,
+        nome: this.nome,
+        modificado: new Date().toISOString().substr(0, 10)
+      }
+      this.$store.dispatch('updatecusto', custo)
     }
   }
 }
