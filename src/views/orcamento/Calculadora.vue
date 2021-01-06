@@ -3,22 +3,22 @@
     <v-row class="justify-center">
       <v-col cols="12" sm="6" class="pa-6">
 
-        <v-layout row>
-          <v-flex xs12 class="secondary pl-4 py-5 mb-4">
+        <v-row class="justify-center">
+          <v-col cols="12" class="secondary pl-4 py-5 mb-4">
             <v-icon v-if="id === '0'" class="success--text mr-2">mdi-calculator</v-icon>
             <v-icon @click="nome = custo.nome; dialog3 = true" v-else class="primary--text mr-2">mdi-pencil-outline</v-icon>
             <strong class="success--text">{{ titulo }}</strong>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
 
-        <v-layout row>
-          <v-flex xs12 class="success">
+        <v-row>
+          <v-col cols="12" class="success">
             <h5 class="white--text ma-2">RECEITAS NECESSÁRIAS</h5>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
 
-        <v-layout row>
-          <v-flex xs10 offset-xs1>
+        <v-row class="justify-center">
+          <v-col cols="12" xl="10">
             <v-list dense color="grey lighten-4">
               <v-list-item-group v-model="active" color="success">
                 <v-list-item v-for="item in items" :key="item.id">
@@ -45,8 +45,8 @@
                 </v-list-item>
               </v-list-item-group>
             </v-list>
-          </v-flex>
-        </v-layout>
+          </v-col>
+        </v-row>
 
         <!-- PEQUENO FORMULÁRIO PARA INCLUSÃO DE RECEITAS -->
         <v-row class="justify-center align-center">
@@ -697,6 +697,14 @@ export default {
         return 0
       })
     },
+    horaAtual () {
+      const time = new Date()
+      let H = time.getHours().toString()
+      if (H.length === 1) { H = '0' + H }
+      let M = time.getMinutes().toString()
+      if (M.length === 1) { M = '0' + M }
+      return H + ':' + M
+    },
     copiarCusto () {
       const custo = {
         nome: this.nome,
@@ -705,7 +713,7 @@ export default {
         outros: this.outrosValor,
         outrosDescricao: this.outrosDescricao,
         arredondar: this.arredondar,
-        modificado: new Date().toISOString().substr(0, 10)
+        modificado: new Date().toISOString().substr(0, 10) + ' ' + this.horaAtual()
       }
       this.$store.dispatch('createcusto', custo)
       this.nome = ''
@@ -718,7 +726,7 @@ export default {
         outros: this.outrosValor,
         outrosDescricao: this.outrosDescricao,
         arredondar: this.arredondar,
-        modificado: new Date().toISOString().substr(0, 10)
+        modificado: new Date().toISOString().substr(0, 10) + ' ' + this.horaAtual()
       }
       if (this.id === '0') {
         this.$store.dispatch('createcusto', custo)
@@ -735,7 +743,7 @@ export default {
       const custo = {
         id: this.id,
         nome: this.nome,
-        modificado: new Date().toISOString().substr(0, 10)
+        modificado: new Date().toISOString().substr(0, 10) + ' ' + this.horaAtual()
       }
       this.$store.dispatch('updatecusto', custo)
     }

@@ -28,6 +28,23 @@
             </v-row>
           </v-col>
         </v-row>
+        <v-row class="justify-center mt-4">
+          <v-col cols="8">
+            <small class="success--text">Ordenado por: </small>
+            <v-btn
+              small
+              @click="sort('nome')"
+              :color="order==='nome'?'success':'grey'"
+              text
+            >nome</v-btn>
+            <v-btn
+              small
+              @click="sort('date')"
+              :color="order==='date'?'success':'grey'"
+              text
+            >data</v-btn>
+          </v-col>
+        </v-row>
         <v-row class="justify-center">
           <v-col cols="12" sm="6">
             <v-list shaped class="ml-4 mr-2">
@@ -53,6 +70,18 @@
               </v-list-item-group>
             </v-list>
           </v-col>
+        </v-row>
+
+        <v-row class="justify-center">
+          <v-btn
+            fab
+            small
+            color="secondary primary--text"
+            :loading="loading"
+            @click="$router.go(-1)"
+          >
+            <v-icon class="mr-1">mdi-arrow-left-bold</v-icon>
+          </v-btn>
         </v-row>
 
         <template>
@@ -114,6 +143,7 @@ export default {
   },
   data () {
     return {
+      order: 'date',
       active: '',
       dialog: false,
       loading: false,
@@ -130,6 +160,10 @@ export default {
     }
   },
   methods: {
+    sort (s) {
+      this.order = s
+      this.$store.dispatch('setSortDate', s)
+    },
     setSearch () {
       this.$store.dispatch('setSearch4', this.search)
     },
@@ -147,10 +181,11 @@ export default {
       }
       this.setSearch()
     },
-    formatDate (date) {
-      if (!date) return null
+    formatDate (d) {
+      if (!d) return null
+      const [date, hora] = d.split(' ')
       const [year, month, day] = date.split('-')
-      return `${day}/${month}/${year}`
+      return `${day}/${month}/${year} ${hora}`
     }
   }
 }

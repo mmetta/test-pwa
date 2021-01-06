@@ -36,6 +36,13 @@ const actions = {
   setId ({ commit }, id) {
     commit('setId', id)
   },
+  setSortDate ({ commit }, order) {
+    if (order === 'date') {
+      commit('setSortDate')
+    } else {
+      commit('setLoadedcustos', 0)
+    }
+  },
   loadcustos ({ commit }) {
     if (Store.state.user) {
       const uid = Store.state.user.id
@@ -153,7 +160,25 @@ const mutations = {
   setId (state, id) {
     state.id = id
   },
+  setSortDate (state) {
+    const payload = state.custos
+    const list = payload.sort((a, b) => {
+      a = a.modificado
+      b = b.modificado
+      if (a < b) {
+        return 1
+      }
+      if (a > b) {
+        return -1
+      }
+      return 0
+    })
+    state.custos = list
+  },
   setLoadedcustos (state, payload) {
+    if (payload === 0) {
+      payload = state.custos
+    }
     const list = payload.sort((a, b) => {
       a = a.nome
       b = b.nome
