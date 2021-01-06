@@ -18,7 +18,7 @@
         </v-row>
 
         <v-row class="justify-center">
-          <v-col cols="12" xl="10">
+          <v-col cols="12" lg="10">
             <v-list dense color="grey lighten-4">
               <v-list-item-group v-model="active" color="success">
                 <v-list-item v-for="item in items" :key="item.id">
@@ -50,9 +50,9 @@
 
         <!-- PEQUENO FORMULÁRIO PARA INCLUSÃO DE RECEITAS -->
         <v-row class="justify-center align-center">
-          <v-col cols="10">
-            <v-layout row class="justify-center">
-              <v-flex xs6 class="teal lighten-5 px-2">
+          <v-col cols="12" lg="10">
+            <v-row class="justify-center">
+              <v-col cols="6" class="teal lighten-5">
                 <v-select
                   id="selreceita"
                   color="success"
@@ -62,8 +62,8 @@
                   v-model="receita"
                   label="receita"
                 ></v-select>
-              </v-flex>
-              <v-flex xs6 class="px-2">
+              </v-col>
+              <v-col cols="6" class="px-2">
                 <v-text-field
                   color="success"
                   name="rend"
@@ -74,10 +74,10 @@
                   disabled
                   readonly
                 ></v-text-field>
-              </v-flex>
-            </v-layout>
-              <v-layout row class="justify-center">
-                <v-flex xs6 class="teal lighten-5 px-2">
+              </v-col>
+            </v-row>
+              <v-row class="justify-center">
+                <v-col cols="6" class="teal lighten-5">
                   <v-text-field
                     color="success"
                     name="quant"
@@ -89,9 +89,8 @@
                     tile
                     required
                   ></v-text-field>
-                </v-flex>
-              <v-flex xs6>
-                <v-layout row class="justify-center">
+                </v-col>
+              <v-col cols="6">
                   <v-btn
                     v-if="btn === 'new'"
                     color="success"
@@ -116,19 +115,22 @@
                     <v-icon>mdi-sync</v-icon>
                     alterar
                   </v-btn>
-                </v-layout>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
           </v-col>
         </v-row>
         <!-- FIM DO PEQUENO FORMULÁRIO PARA INCLUSÃO DE RECEITAS -->
 
-        <v-divider class="success my-4 py-4"></v-divider>
+        <v-row>
+          <v-col cols="12" class="success">
+            <!-- <h5 class="white--text ma-2">RECEITAS NECESSÁRIAS</h5> -->
+          </v-col>
+        </v-row>
 
-            <v-layout row>
-              <v-flex xs12 class="px-4">
-                <v-layout row>
-                  <v-flex xs6 class="px-2">
+            <v-row>
+              <v-col cols="12" class="px-2">
+                <v-row class="justify-center">
+                  <v-col cols="6" class="px-1">
                     <v-select
                       color="success"
                       :items="margemSelect"
@@ -136,9 +138,10 @@
                       item-text="text"
                       v-model="margem"
                       label="Margem"
+                      hide-details
                     ></v-select>
-                  </v-flex>
-                  <v-flex xs6 class="px-2">
+                  </v-col>
+                  <v-col cols="6" class="px-1">
                     <v-text-field
                       prefix="R$ "
                       type="number"
@@ -148,25 +151,26 @@
                       v-model="totalReceitas"
                       id="totalreceitas"
                       readonly
+                      hide-details
                     ></v-text-field>
-                  </v-flex>
-                </v-layout>
-              </v-flex>
-            </v-layout>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
 
-            <v-layout row>
-              <v-flex xs6 class="pa-2">
+            <v-row class="justify-center">
+              <v-col cols="6" class="pa-1">
                 <v-btn
                   text
                   color="success"
-                  class="my-2"
+                  class="my-1"
                   @click="setOutros()"
                 >
                   outros custos
                   <v-icon right>mdi-cursor-default-click</v-icon>
                 </v-btn>
-              </v-flex>
-              <v-flex xs6 class="px-2">
+              </v-col>
+              <v-col cols="6" class="px-2">
                 <v-text-field
                   v-if="outros"
                   color="success"
@@ -177,11 +181,11 @@
                   id="outrosvalor"
                   v-model="outrosValor"
                 ></v-text-field>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
 
-            <v-layout v-if="outros" row>
-              <v-flex xs12 class="px-2">
+            <v-row v-if="outros">
+              <v-col cols="12" class="px-1">
                 <v-textarea
                   color="success"
                   v-model="outrosDescricao"
@@ -192,14 +196,14 @@
                   label="Outros custos"
                   placeholder="embalagem, entrega, etc."
                 ></v-textarea>
-              </v-flex>
-            </v-layout>
+              </v-col>
+            </v-row>
 
           <!-- Plugin para arredondar o valor total -->
-            <v-layout row>
-              <v-flex xs12 class="px-2">
-                <v-layout row>
-                  <v-flex xs6 class="px-2">
+            <v-row>
+              <v-col cols="12" class="px-2">
+                <v-row>
+                  <v-col cols="6" class="px-1">
                     <v-text-field
                       prefix="R$ "
                       color="success"
@@ -208,9 +212,10 @@
                       label="Soma total"
                       id="varr"
                       v-model="varr"
+                      hide-details
                     ></v-text-field>
-                  </v-flex>
-                  <v-flex xs6 class="px-2">
+                  </v-col>
+                  <v-col cols="6" class="px-1">
                     <v-select
                       color="success"
                       :items="tipos"
@@ -218,16 +223,16 @@
                       item-text="text"
                       v-model="arredondar"
                       label="Arredondar"
+                      hide-details
                     ></v-select>
-                  </v-flex>
-                  </v-layout>
-              </v-flex>
-            </v-layout>
+                  </v-col>
+                  </v-row>
+              </v-col>
+            </v-row>
           <!-- FIM Plugin para arredondar o valor total -->
 
-            <v-layout row class="justify-center align-center">
-
-              <v-flex xs6 class="teal lighten-5 px-2">
+            <v-row class="justify-center align-center teal lighten-5">
+              <v-col cols="6" class="px-2">
                 <v-text-field
                   prefix="R$ "
                   type="number"
@@ -238,11 +243,14 @@
                   id="total"
                   readonly
                 ></v-text-field>
-              </v-flex>
+              </v-col>
+            </v-row>
 
-            </v-layout>
-
-      <v-divider class="success my-4 py-4"></v-divider>
+        <v-row class="mt-2">
+          <v-col cols="12" class="success">
+            <!-- <h5 class="white--text ma-2">RECEITAS NECESSÁRIAS</h5> -->
+          </v-col>
+        </v-row>
 
         <v-row class="justify-center my-3">
           <v-col cols="12">
@@ -297,7 +305,7 @@
                       <v-btn
                         block
                         height="44"
-                        tile color="success"
+                        tile color="primary"
                         :disabled="!formIsValid"
                         :loading="loading"
                         @click="id === '0' ? dialog = true : salvarCusto()"

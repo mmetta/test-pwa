@@ -38,10 +38,10 @@
           </v-col>
         </v-row>
 
-    <v-layout row>
-      <v-flex xs12 md6 offset-md3 class="pa-3">
-        <v-layout row>
-          <v-flex xs12>
+    <v-row class="justify-center">
+      <v-col cols="12" sm="6" class="pa-3">
+        <v-row class="justify-center">
+          <v-col cols="12">
             <v-list shaped class="ml-4 mr-2">
           <v-list-item-group v-model="active" color="success">
             <v-list-item v-for="receita in receitas" :key="receita.id" aria-selected="active">
@@ -69,10 +69,10 @@
             </v-list-item>
           </v-list-item-group>
         </v-list>
-      </v-flex>
-    </v-layout>
-  </v-flex>
-</v-layout>
+      </v-col>
+    </v-row>
+  </v-col>
+</v-row>
   <template>
     <v-dialog
       v-model="dialog"

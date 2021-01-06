@@ -7,7 +7,7 @@
     ></v-img>
   </v-row>
   <v-row class="justify-center my-5">
-    <v-col cols="12" md="6">
+    <v-col cols="12" sm="6">
       <p class="text-justify grey--text">
         Seu donativo de qualquer valor é muito importante para manter este projeto ativo e permitir melhorias e atualizações importantes para que o aplicativo continue sendo uma ferramenta importante para todos nós.
       </p>
