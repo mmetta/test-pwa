@@ -11,22 +11,30 @@ if (process.env.NODE_ENV === 'production') {
       )
     },
     registered () {
-      console.log('Service worker has been registered.')
+      console.log('Service worker registrado.')
     },
     cached () {
-      console.log('Content has been cached for offline use.')
+      console.log('Conteúdo em cache para uso offline.')
     },
     updatefound () {
       console.log('New content is downloading.')
     },
-    updated () {
-      console.log('New content is available; please refresh.')
+    updated (registration) {
+      const confirmationResult = confirm('Novo conteúdo disponível! Atualize o app agora.')
+      if (confirmationResult) registration.waiting.postMessage({ action: 'skipWaiting' })
     },
     offline () {
-      console.log('No internet connection found. App is running in offline mode.')
+      console.log('Sem conexão no momento. App rodando no modo offline.')
     },
     error (error) {
       console.error('Error during service worker registration:', error)
     }
+  })
+
+  let refreshing
+  navigator.serviceWorker.addEventListener('controllerchange', e => {
+    if (refreshing) return
+    window.location.reload()
+    refreshing = true
   })
 }
