@@ -7,7 +7,10 @@
       <v-btn icon>
         <v-icon small>mdi-bell</v-icon>
       </v-btn>
-      <v-btn icon>
+      <v-btn
+        icon
+        @click="ir('/config')"
+      >
         <v-icon>mdi-dots-vertical</v-icon>
       </v-btn>
     </v-app-bar>

@@ -11,6 +11,7 @@ import SaveReceita from '../views/receita/SaveReceita.vue'
 import Calculadora from '../views/orcamento/Calculadora.vue'
 import Custo from '../views/orcamento/Custos.vue'
 import Donativo from '../views/Donativo.vue'
+import Config from '../views/Config.vue'
 
 Vue.use(VueRouter)
 
@@ -101,6 +102,15 @@ const routes = [
     beforeEnter: AuthGuard,
     meta: {
       icon: 'mdi-currency-usd'
+    }
+  },
+  {
+    path: '/config',
+    name: 'Config',
+    component: Config,
+    beforeEnter: AuthGuard,
+    meta: {
+      icon: 'mdi-cog-outline'
     }
   },
   {

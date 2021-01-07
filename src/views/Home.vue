@@ -1,72 +1,26 @@
 <template>
-  <div class="home">
-
-    <v-row class="justify-center my-2">
-      <v-col cols="10" sm="6">
-        {{ 'userAgent: ' }}{{ userAgent }}
-        {{ ' - Standalone: ' }}{{ isInStandaloneMode() }}
+  <div>
+    <v-row class="justify-center">
+      <v-col cols="8">
+        <v-row class="justify-center">
+          <v-img max-width="122px" max-height="122" src="../assets/Sc-192.png"></v-img>
+        </v-row>
+        <v-row class="justify-center">
+          <strong class="logo grey--text">SEU</strong><span class="logo grey--text">CUSTO</span>
+        </v-row>
+        <v-row class="justify-center">
+          <span class="grey--text">{{ user.email }}</span>
+        </v-row>
       </v-col>
     </v-row>
-    <v-row class="justify-center my-2">
-      {{ 'isIos: ' }}{{ isIos(userAgent) }}
-    </v-row>
-    <v-row class="justify-center my-2">
-      {{ 'winStandalone: ' }}{{ winStandalone }}
-    </v-row>
-    <v-row class="justify-center my-2">
-      {{ 'navStandalone: ' }}{{ navStandalone }}
-    </v-row>
-    <v-row class="justify-center my-4">
-      {{ 'DISPOSITIVO: ' }} <strong v-if="isIos(userAgent)">{{ ' IOS-APPLE' }}</strong><strong v-else>{{ ' Chrome-Android' }}</strong>
-    </v-row>
 
-    <v-row v-if="isIos(userAgent) && !winStandalone" class="justify-center">
+    <!-- BOTÕES PARA INSTALAR (IOS e ANDROID) -->
+    <v-row v-if="isIos(userAgent)" class="justify-center">
       <installios />
     </v-row>
-    <v-row v-if="!isIos(userAgent) && !winStandalone" class="justify-center">
+    <v-row v-else class="justify-center">
       <install />
     </v-row>
-
-    <v-row class="justify-center">
-      <strong v-if="instalado" class="success--text">Instalado com sucesso!!!</strong>
-      <strong v-else class="primary--text">Aguardando instalação...</strong>
-    </v-row>
-
-    <v-row class="justify-center">
-      <strong class="success--text">Modo: {{ modo }}</strong>
-    </v-row>
-
-        <template>
-          <v-dialog
-            v-model="dialog"
-            scrollable
-            persistent
-            :overlay="false"
-            max-width="300px"
-            transition="dialog-transition"
-          >
-            <v-card>
-              <v-card-title primary-title>
-                Excluir ?
-              </v-card-title>
-              <v-card-text>
-                {{ remover.nome }}
-              </v-card-text>
-              <v-card-actions>
-                <v-btn
-                  color="warning"
-                  text
-                  @click="toast('n')"
-                >Não</v-btn>
-                <v-btn
-                  color="success"
-                  text
-                  @click="toast('y')"
-                >Sim</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </template>
 
   </div>
 </template>
@@ -81,90 +35,38 @@ export default {
     install,
     installios
   },
-  created () {
-    this.$store.dispatch('loadInsumos')
-    this.$store.dispatch('loadImportInsumos')
-    this.$store.dispatch('loadReceitas')
-    this.$store.dispatch('loadcustos')
-    this.$store.dispatch('loadConfig')
-  },
   computed: {
-    modo () {
-      let displayMode = 'browser tab'
-      window.addEventListener('DOMContentLoaded', () => {
-        if (navigator.standalone) {
-          displayMode = 'standalone-ios'
-        }
-        if (window.matchMedia('(display-mode: standalone)').matches) {
-          displayMode = 'standalone'
-        }
-        // Log launch display mode to analytics
-        console.log('DISPLAY_MODE_LAUNCH:', displayMode)
-      })
-      return displayMode
-    },
-    instalado () {
-      let i = false
-      window.addEventListener('appinstalled', (evt) => {
-        // Log install to analytics
-        console.log('INSTALL: Success')
-        i = true
-      })
-      return i
-    },
-    insumos () {
-      return this.$store.getters.insumos
-    }
-  },
-  watch: {
-    insumos (i) {
-      return i
-    }
-  },
-  mounted () {
-    this.isIos(this.userAgent)
-    // Checks if should display install popup notification:
-    if (this.isIos(this.userAgent) && !this.isInStandaloneMode()) {
-      this.showInstallMessage = true
+    user () {
+      return this.$store.getters.user
     }
   },
   data () {
     return {
-      dialog: false,
-      remover: {},
       showInstallMessage: false,
       userAgent: window.navigator.userAgent.toLowerCase(),
       isInStandaloneMode: () => ('standalone' in window.navigator) && (window.navigator.standalone),
-      winStandalone: window.matchMedia('(display-mode: standalone)').matches,
-      navStandalone: !!navigator.standalone
+      winStandalone: window.matchMedia('(display-mode: standalone)').matches
     }
   },
   methods: {
-    excluir (i) {
-      this.remover = i
-      this.dialog = true
-    },
     isIos (userAgent) {
-      console.log(userAgent)
-      return /iphone|ipad|macintosh/g.test(userAgent)
-      // return /windows|linux|android/g.test(userAgent)
-    },
-    toast (t) {
-      this.dialog = false
-      if (t === 'y') {
-        this.$toast('Ok feito!!!', {
-          position: 'top-center',
-          icon: 'mdi mdi-bomb-off',
-          timeout: 2000
-        })
-      } else {
-        this.$toast.warning('Ok feito!!!', {
-          position: 'top-center',
-          icon: 'mdi mdi-cupcake',
-          timeout: 2000
-        })
+      const ios = /iphone|ipad|macintosh/g.test(userAgent)
+      let res = null
+      if (ios && !this.winStandalone) {
+        res = true
       }
+      if (!ios && !this.winStandalone) {
+        res = false
+      }
+      console.log(userAgent, res)
+      return res
     }
   }
 }
 </script>
+
+<style scoped>
+  .logo {
+    font-size: 32px !important;
+  }
+</style>

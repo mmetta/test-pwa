@@ -19,7 +19,11 @@ new Vue({
     this.$firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         this.$store.dispatch('autoSignIn', user)
-        console.log(user)
+        this.$store.dispatch('loadInsumos')
+        this.$store.dispatch('loadImportInsumos')
+        this.$store.dispatch('loadReceitas')
+        this.$store.dispatch('loadcustos')
+        this.$store.dispatch('loadConfig')
       }
     })
   },
