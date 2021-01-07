@@ -1,8 +1,5 @@
 <template>
   <div class="home">
-    <v-row class="justify-center">
-      <img alt="Vue logo" src="../assets/logo.png">
-    </v-row>
 
     <v-row class="justify-center my-2">
       <v-col cols="10" sm="6">
@@ -28,6 +25,15 @@
     </v-row>
     <v-row v-if="!isIos(userAgent) && !winStandalone" class="justify-center">
       <install />
+    </v-row>
+
+    <v-row class="justify-center">
+      <strong v-if="instalado" class="success--text">Instalado com sucesso!!!</strong>
+      <strong v-else class="primary--text">Aguardando instalação...</strong>
+    </v-row>
+
+    <v-row class="justify-center">
+      <strong class="success--text">Modo: {{ modo }}</strong>
     </v-row>
 
         <template>
@@ -83,6 +89,29 @@ export default {
     this.$store.dispatch('loadConfig')
   },
   computed: {
+    modo () {
+      let displayMode = 'browser tab'
+      window.addEventListener('DOMContentLoaded', () => {
+        if (navigator.standalone) {
+          displayMode = 'standalone-ios'
+        }
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+          displayMode = 'standalone'
+        }
+        // Log launch display mode to analytics
+        console.log('DISPLAY_MODE_LAUNCH:', displayMode)
+      })
+      return displayMode
+    },
+    instalado () {
+      let i = false
+      window.addEventListener('appinstalled', (evt) => {
+        // Log install to analytics
+        console.log('INSTALL: Success')
+        i = true
+      })
+      return i
+    },
     insumos () {
       return this.$store.getters.insumos
     }
