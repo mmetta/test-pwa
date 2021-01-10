@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.abd7b15c29b3b6c461e32b33ff78d1f2.js"
+  "/precache-manifest.f3a08c8b08575f9e1f327e36131e3413.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "seucusto"});

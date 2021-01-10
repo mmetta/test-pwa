@@ -210,16 +210,6 @@ const actions = {
           if (err === 'auth/network-request-failed') {
             message = 'Falha ao conectar, verifique sua internet.'
           }
-          // const snack = {
-          //   snackbar: true,
-          //   color: 'error',
-          //   timeout: 6000,
-          //   message: message
-          // }
-          // maneira correta de acessar mutation de módulo importado
-          // commit('snack', snack)
-          // position: "bottom-center",
-          // position: "top-right",
           this._vm.$toast.error(message, {
             position: 'top-center',
             timeout: 5000

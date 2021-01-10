@@ -112,8 +112,15 @@ export default {
   watch: {
     user (value) {
       if (value !== null && value !== undefined) {
-        this.$store.dispatch('checarEmail')
-        this.$router.push('/confirm')
+        // this.$store.dispatch('checarEmail')
+        // this.$router.push('/confirm')
+        const config = {
+          basica: false,
+          margem: 3,
+          processamento: 1.3
+        }
+        this.$store.dispatch('createConfig', config)
+        this.$router.push('/')
       }
     }
   },

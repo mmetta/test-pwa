@@ -1,12 +1,12 @@
 <template>
-  <div v-if="user && confirm">
+  <div v-if="user">
     <v-app-bar elevation="0" height="55px" color="primary" dark app>
       <v-app-bar-nav-icon @click="toggle=!toggle"></v-app-bar-nav-icon>
       <v-toolbar-title><strong>SEU</strong><span>CUSTO</span></v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon>
+      <!-- <v-btn icon>
         <v-icon small>mdi-bell</v-icon>
-      </v-btn>
+      </v-btn> -->
       <v-btn
         icon
         @click="ir('/config')"
@@ -49,18 +49,18 @@
 <script>
 export default {
   computed: {
+    // confirm () {
+    //   let res = false
+    //   if (this.user) {
+    //     res = this.user.emailVerified
+    //   }
+    //   return res
+    // },
     user () {
       return this.$store.getters.user
     },
     config () {
       return this.$store.getters.config
-    },
-    confirm () {
-      let res = false
-      if (this.user) {
-        res = this.user.emailVerified
-      }
-      return res
     }
   },
   data: () => ({
