@@ -122,10 +122,11 @@ const actions = {
   checarEmail ({ commit }) {
     commit('clearError')
     commit('setLoading', true)
-    let message = 'Email de confirmação enviado'
-    let color = 'success'
     const user = firebase.auth().currentUser
+    let message = 'Email de confirmação enviado para ' + user.email
+    let color = 'success'
     user.sendEmailVerification().then(() => {
+      console.log(message)
     }).catch((error) => {
       console.log(error)
       message = 'Email de confirmação falhou'

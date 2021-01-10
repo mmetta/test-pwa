@@ -48,6 +48,13 @@ export default {
       winStandalone: window.matchMedia('(display-mode: standalone)').matches
     }
   },
+  created () {
+    if (this.user) {
+      if (!this.user.emailVerified) {
+        this.$router.push('/confirm')
+      }
+    }
+  },
   methods: {
     isIos (userAgent) {
       const ios = /iphone|ipad|macintosh/g.test(userAgent)

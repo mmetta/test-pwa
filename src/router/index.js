@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import AuthGuard from './auth-guard'
 import SignIn from '../components/User/Signin.vue'
+import SignUp from '../components/User/Signup.vue'
+import Confirm from '../components/User/Confirm.vue'
 import Home from '../views/Home.vue'
 import Insumo from '../views/insumo/Insumos.vue'
 import SaveInsumo from '../views/insumo/SaveInsumo.vue'
@@ -29,6 +31,16 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: SignIn
+  },
+  {
+    path: '/signup',
+    name: 'SignUp',
+    component: SignUp
+  },
+  {
+    path: '/confirm',
+    name: 'Confirm',
+    component: Confirm
   },
   {
     path: '/insumo',
