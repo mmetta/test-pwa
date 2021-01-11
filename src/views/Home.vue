@@ -15,10 +15,10 @@
     </v-row>
 
     <!-- BOTÕES PARA INSTALAR (IOS e ANDROID) -->
-    <v-row v-if="isIos(userAgent)" class="justify-center">
+    <v-row v-if="isIos(userAgent) && !this.winStandalone" class="justify-center">
       <installios />
     </v-row>
-    <v-row v-else class="justify-center">
+    <v-row v-if="!isIos(userAgent) && !this.winStandalone" class="justify-center">
       <install />
     </v-row>
 
@@ -57,16 +57,7 @@ export default {
   // },
   methods: {
     isIos (userAgent) {
-      const ios = /iphone|ipad|macintosh/g.test(userAgent)
-      let res = null
-      if (ios && !this.winStandalone) {
-        res = true
-      }
-      if (!ios && !this.winStandalone) {
-        res = false
-      }
-      console.log(userAgent, res)
-      return res
+      return /iphone|ipad|macintosh/g.test(userAgent)
     }
   }
 }
