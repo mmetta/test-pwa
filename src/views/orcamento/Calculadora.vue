@@ -263,9 +263,9 @@
                     height="44"
                     color="secondary primary--text"
                     :loading="loading"
-                    @click="$router.go(-1)"
+                    @click="$router.push('/')"
                   >
-                    <v-icon class="mr-1">mdi-arrow-left-bold</v-icon>
+                    <v-icon class="mr-1">mdi-home</v-icon>
                   </v-btn>
                   <v-btn
                     v-else
