@@ -92,7 +92,6 @@ const actions = {
     let text = ''
     const name = 'insumo'
     const importado = payload.imported
-    console.log(importado)
     firebase.database().ref(uid + '/insumos').push(insumo)
       .then((data) => {
         key = data.key

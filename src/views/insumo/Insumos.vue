@@ -67,6 +67,7 @@
           </v-col>
         </v-row>
 
+      <!-- Dialog confirmando exclusão -->
         <template>
           <v-dialog
             v-model="dialog"
@@ -78,10 +79,13 @@
           >
             <v-card>
               <v-card-title primary-title>
-                Excluir ?
+                Excluir
               </v-card-title>
-              <v-card-text>
+              <v-card-subtitle>
                 {{ remover.nome }}
+              </v-card-subtitle>
+              <v-card-text>
+                Esta ação afetará as receitas que contêm este item, deseja continuar?
               </v-card-text>
               <v-card-actions>
                 <v-btn
@@ -98,6 +102,42 @@
             </v-card>
           </v-dialog>
         </template>
+      <!-- FIM Dialog confirmando exclusão -->
+
+      <!-- Dialog para listar receitas afetadas pela exclusão -->
+      <template>
+        <v-dialog
+          v-model="dialog2"
+          scrollable
+          persistent
+          :overlay="false"
+          max-width="300px"
+          transition="dialog-transition"
+        >
+          <v-card>
+            <v-card-title primary-title>
+              Receitas afetadas
+            </v-card-title>
+            <v-card-text>
+              <v-row
+                v-for="receita in receitasAlteradas"
+                :key="receita.id"
+                class="secondary my-1 pa-2"
+              >
+                {{ receita.nome }}
+              </v-row>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn
+                color="success"
+                text
+                @click="dialog2 = false"
+              >Entendi</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </template>
+      <!-- FIM Dialog para listar receitas afetadas pela exclusão -->
 
       <template v-if="!basica">
         <listabasica />
@@ -131,6 +171,9 @@ export default {
     },
     base () {
       return this.$store.getters.insumos
+    },
+    receitasAlteradas () {
+      return this.$store.getters.receitasAlteradas
     }
   },
   watch: {
@@ -157,6 +200,7 @@ export default {
     return {
       active: '',
       dialog: false,
+      dialog2: false,
       loading: false,
       remover: '',
       items: [],
@@ -210,8 +254,14 @@ export default {
       this.dialog = true
     },
     remove (insumo) {
-      if (insumo.id) {
-        this.$store.dispatch('deleteInsumo', insumo.id)
+      if (!insumo.id) {
+        return
+      }
+      this.$store.dispatch('deleteInsumo', insumo.id)
+      this.$store.dispatch('updateReceitaDeleteInsumo', insumo.id)
+      console.log(this.receitasAlteradas)
+      if (this.receitasAlteradas.length > 0) {
+        this.dialog2 = true
       }
     }
   }

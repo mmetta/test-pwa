@@ -72,10 +72,6 @@ const actions = {
         return key
       })
       .then(key => {
-        // commit('createReceita', {
-        //   ...receita,
-        //   id: key
-        // })
         text = 'Receita incluída com sucesso'
         commit('setMessage', { name, text, key })
       })
@@ -142,6 +138,40 @@ const actions = {
       // Fim do calculo de novo custo
       item.valor = parseFloat(valor).toFixed(2)
       // Cálculo de novo total
+      let soma = 0
+      soma = [].reduce.call(receita.ingredientes, (somatorio, el) => {
+        return somatorio + parseFloat(el.valor, 10) || 0
+      }, 0)
+      // Custo de processamento (padrão 30%)
+      const proc = Store.state.config.processamento
+      soma = soma * proc
+      receita.total = parseFloat(soma).toFixed(2)
+      // Fim do cálculo de novo total
+      // commit('updateReceitaCusto', receita)
+      const uid = Store.state.user.id
+      firebase.database().ref(uid + '/receitas').child(receita.id).update(receita)
+        .then(() => {
+          commit('updateReceita', receita)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    }
+    commit('setReceitasAlteradas', alter)
+  },
+  updateReceitaDeleteInsumo ({ commit }, payload) {
+    const receitas = state.receitas
+    const insumo = payload
+    const alter = receitas.filter(receita => {
+      return receita.ingredientes.find(ingrediente => {
+        return ingrediente.id === insumo
+      })
+    })
+    for (let i = 0; i < alter.length; i++) {
+      const receita = alter[i]
+      const nova = receita.ingredientes.filter(ingrediente => ingrediente.id !== insumo)
+      console.log(nova)
+      receita.ingredientes = nova
       let soma = 0
       soma = [].reduce.call(receita.ingredientes, (somatorio, el) => {
         return somatorio + parseFloat(el.valor, 10) || 0

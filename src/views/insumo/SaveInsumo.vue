@@ -228,10 +228,15 @@ export default {
     },
     update (dados) {
       this.loading = true
+      const alterouPreco = this.preco !== parseFloat(this.insumo.preco).toFixed(2)
       this.$store.dispatch('updateInsumo', dados)
-      this.$store.dispatch('updateReceitaCusto', dados)
-      if (this.receitasAlteradas.length > 0) {
-        this.dialog = true
+      if (alterouPreco) {
+        this.$store.dispatch('updateReceitaCusto', dados)
+        if (this.receitasAlteradas.length > 0) {
+          this.dialog = true
+        } else {
+          this.$router.push('/insumo')
+        }
       } else {
         this.$router.push('/insumo')
       }
