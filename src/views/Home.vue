@@ -3,7 +3,7 @@
     <v-row class="justify-center">
       <v-col cols="8">
         <v-row class="justify-center">
-          <v-img max-width="122px" max-height="122" src="../assets/Sc-192.png"></v-img>
+          <v-img max-width="68px" max-height="68px" src="../assets/Sc-192.png"></v-img>
         </v-row>
         <v-row class="justify-center">
           <strong class="logo grey--text">SEU</strong><span class="logo grey--text">CUSTO</span>
@@ -48,13 +48,6 @@ export default {
       winStandalone: window.matchMedia('(display-mode: standalone)').matches
     }
   },
-  // created () {
-  //   if (this.user) {
-  //     if (!this.user.emailVerified) {
-  //       this.$router.push('/confirm')
-  //     }
-  //   }
-  // },
   methods: {
     isIos (userAgent) {
       return /iphone|ipad|macintosh/g.test(userAgent)
@@ -65,6 +58,6 @@ export default {
 
 <style scoped>
   .logo {
-    font-size: 32px !important;
+    font-size: 22px !important;
   }
 </style>

@@ -37,12 +37,12 @@
 
             <v-list dense color="grey lighten-4">
               <v-list-item-group v-model="active" color="success">
-                <v-list-item v-for="ingrediente in ingredientes" :key="ingrediente.id" aria-selected="active">
+                <v-list-item v-for="(ingrediente, index) in ingredientes" :key="index" aria-selected="active">
                   <v-list-item-avatar>
                     <v-icon v-if="ingrediente.nome === select" color="red lighten-1" small>mdi-close</v-icon>
                     <v-icon v-else color="teal lighten-1">mdi-square-small</v-icon>
                   </v-list-item-avatar>
-                  <v-list-item-content @click="alterar(ingrediente)">
+                  <v-list-item-content @click="alterar(ingrediente, index)">
                     <v-list-item-title :id="ingrediente.nome" v-text="ingrediente.nome"></v-list-item-title>
                     <v-list-item-subtitle>
                       {{ 'Quant: ' }}
@@ -65,7 +65,7 @@
           </v-flex>
         </v-layout>
 
-          <v-form @submit.prevent="saveIngrediente" ref="form">
+          <v-form @submit.prevent="detectaDuplicidade" ref="form">
             <v-layout row>
               <v-flex xs12 class="px-4">
                 <v-select
@@ -120,14 +120,14 @@
             </v-layout>
           </v-form>
 
-      <v-snackbar
+      <!-- <v-snackbar
         v-model="snackbar"
         :timeout="5000"
         color="grey lighten-2 red--text "
       >
         <v-icon color="red">mdi-alert-outline</v-icon>
         <h3>{{ message }}</h3>
-      </v-snackbar>
+      </v-snackbar> -->
 
       <v-divider class="success my-4 py-4"></v-divider>
 
@@ -165,7 +165,6 @@
                   v-model="total"
                   type="number"
                   @change="decimal()"
-                  disabled
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -209,6 +208,41 @@
 
       </v-flex>
     </v-layout>
+
+    <!-- Dialog de aviso DUPLICIDADE -->
+      <template>
+        <v-dialog
+          v-model="dialog"
+          scrollable
+          persistent
+          :overlay="false"
+          max-width="300px"
+          transition="dialog-transition"
+        >
+          <v-card>
+            <v-card-title primary-title>
+              Duplicidade
+            </v-card-title>
+            <v-card-text>
+              O item {{ duplo ? duplo.nome : '' }} já está na lista, deseja acrescentar mais esta quantidade?
+            </v-card-text>
+            <v-card-actions>
+              <v-btn
+                color="warning"
+                text
+                @click="resolveDuplicidade('n')"
+              >Não</v-btn>
+              <v-btn
+                color="success"
+                text
+                @click="resolveDuplicidade('y')"
+              >Sim</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </template>
+    <!-- FIM dialog de aviso DUPLICIDADE -->
+
   </v-container>
 </template>
 
@@ -296,6 +330,8 @@ export default {
       proc: this.$store.getters.config.processamento,
       btn: 'new',
       snackbar: false,
+      dialog: false,
+      duplo: undefined,
       message: '',
       active: '',
       rules: [
@@ -329,38 +365,70 @@ export default {
       }
     },
     detectaDuplicidade () {
-      let duplo = false
-      if (this.btn !== 'upd') {
-        const check = this.ingredientes.find((ingrediente) => {
-          return ingrediente.id === this.insumo
+      this.duplo = this.ingredientes.find((ingrediente) => {
+        return ingrediente.id === this.insumo
+      })
+      if (this.btn === 'upd') {
+        const index = this.ingredientes.findIndex((ingrediente) => {
+          return ingrediente === this.duplo
         })
-        if (check !== undefined) {
-          this.message = check.nome + ' já está na lista.'
-          this.snackbar = true
-          this.insumo = ''
-          this.quant = ''
-          duplo = true
+        if (index === this.active) {
+          this.saveIngrediente()
+        } else {
+          this.alertaDuplicidade()
         }
+      } else {
+        this.alertaDuplicidade()
       }
-      return duplo
     },
-    alterar (ingrediente) {
+    alertaDuplicidade () {
+      if (this.duplo === undefined) {
+        this.saveIngrediente()
+      } else {
+        this.dialog = true
+      }
+    },
+    resolveDuplicidade (res) {
+      this.dialog = false
+      if (res === 'y') {
+        this.active = this.ingredientes.findIndex((ingrediente) => {
+          return ingrediente === this.duplo
+        })
+        const quant = parseFloat(this.quant) + parseFloat(this.duplo.quant)
+        const insumo = this.select
+        const valor = this.calculaValor(quant, this.select.preco, this.select.tamanho, this.select.unidade)
+        const ingrediente = {
+          id: this.insumo,
+          nome: insumo.nome,
+          unidade: insumo.unidade,
+          quant: quant,
+          valor: valor
+        }
+        this.btn = 'upd'
+        this.inserirNaLista(ingrediente)
+      } else {
+        this.quant = ''
+        this.insumo = ''
+        this.btn = 'new'
+        this.duplo = undefined
+      }
+    },
+    alterar (ingrediente, index) {
       this.quant = ingrediente.quant
       this.insumo = ingrediente.id
       this.btn = 'upd'
     },
-    excluir (item) {
+    excluir (item, index) {
       const id = item.id
       const antiga = this.ingredientes
       const novaLista = antiga.filter(ingrediente => ingrediente.id !== id)
       this.ingredientes = novaLista
+      this.active = undefined
     },
     saveIngrediente () {
-      if (this.detectaDuplicidade()) {
-        return
-      }
       const quant = this.quant
       const insumo = this.select
+
       const valor = this.calculaValor(this.quant, this.select.preco, this.select.tamanho, this.select.unidade)
       const ingrediente = {
         id: this.insumo,
@@ -369,6 +437,9 @@ export default {
         quant: quant,
         valor: valor
       }
+      this.inserirNaLista(ingrediente)
+    },
+    inserirNaLista (ingrediente) {
       if (this.btn === 'new') {
         this.ingredientes.push(ingrediente)
       } else {
@@ -378,6 +449,7 @@ export default {
       this.quant = ''
       this.insumo = ''
       this.btn = 'new'
+      this.duplo = undefined
     },
     calculaValor (q, p, t, u) {
       if (u === 'Lt' || u === 'Kg') {
