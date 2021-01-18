@@ -1,6 +1,7 @@
 import Store from './modLogin'
 import firebase from 'firebase/app'
 import 'firebase/database'
+import { ordenarPtBr } from '../../plugins/Ordenar-ptbr'
 
 const state = {
   receitas: [],
@@ -217,44 +218,7 @@ const actions = {
 
 const mutations = {
   setLoadedReceitas (state, payload) {
-    const list = payload.sort((a, b) => {
-      a = a.nome
-      b = b.nome
-      a = a.replace(/[AÀÁÂÃÄÅ]/, 'A')
-      a = a.replace(/[aàáâãäå]/, 'a')
-      a = a.replace(/[EÈÉÊË]/, 'E')
-      a = a.replace(/[eéèêë]/, 'e')
-      a = a.replace(/[ií]/, 'i')
-      a = a.replace(/[IÍ]/, 'I')
-      a = a.replace(/[OÓÔÕ]/, 'O')
-      a = a.replace(/[oóôõ]/, 'o')
-      a = a.replace(/[CÇ]/, 'C')
-      a = a.replace(/[cç]/, 'c')
-      a = a.replace(/[UÚ]/, 'U')
-      a = a.replace(/[uú]/, 'u')
-      b = b.replace(/[AÀÁÂÃÄÅ]/, 'A')
-      b = b.replace(/[aàáâãäå]/, 'a')
-      b = b.replace(/[EÈÉÊË]/, 'E')
-      b = b.replace(/[eéèêë]/, 'e')
-      b = b.replace(/[ií]/, 'i')
-      b = b.replace(/[IÍ]/, 'I')
-      b = b.replace(/[OÓÔÕ]/, 'O')
-      b = b.replace(/[oóôõ]/, 'o')
-      b = b.replace(/[CÇ]/, 'C')
-      b = b.replace(/[cç]/, 'c')
-      b = b.replace(/[UÚ]/, 'U')
-      b = b.replace(/[uú]/, 'u')
-      a.replace(/[^a-z0-9]/gi, '')
-      b.replace(/[^a-z0-9]/gi, '')
-      if (a > b) {
-        return 1
-      }
-      if (a < b) {
-        return -1
-      }
-      return 0
-    })
-    state.receitas = list
+    state.receitas = ordenarPtBr(payload, 'nome')
   },
   updateReceita (state, payload) {
     const receita = state.receitas.find(receita => {
