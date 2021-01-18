@@ -5,7 +5,7 @@ import { store } from './store'
 import './registerServiceWorker'
 import firebase from './firebase'
 import vuetify from './plugins/vuetify'
-import Toast from './plugins/toastications'
+import './plugins/toastications'
 
 Vue.use(firebase)
 Vue.config.productionTip = false
@@ -14,7 +14,6 @@ new Vue({
   router,
   store,
   vuetify,
-  Toast,
   created () {
     this.$firebase.auth().onAuthStateChanged((user) => {
       if (user) {
