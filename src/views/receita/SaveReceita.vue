@@ -195,7 +195,7 @@
                     tile color="success"
                     :disabled="!formIsValid"
                     :loading="loading"
-                    @click="save"
+                    @click="loading = true; save()"
                   >
                     <v-icon class="mr-1">mdi-content-save-outline</v-icon>
                     {{ fazer }}
@@ -460,21 +460,24 @@ export default {
     },
     save () {
       if (!this.formIsValid) {
+        this.loading = false
         return
       }
-      const dados = {
-        id: this.id,
-        nome: this.nome,
-        rendimento: Number(this.rendimento),
-        rendUnid: this.rendUnid,
-        ingredientes: this.ingredientes,
-        total: parseFloat(this.total)
-      }
-      if (this.id === 'new') {
-        this.insert(dados)
-      } else {
-        this.update(dados)
-      }
+      setTimeout(() => {
+        const dados = {
+          id: this.id,
+          nome: this.nome,
+          rendimento: Number(this.rendimento),
+          rendUnid: this.rendUnid,
+          ingredientes: this.ingredientes,
+          total: parseFloat(this.total)
+        }
+        if (this.id === 'new') {
+          this.insert(dados)
+        } else {
+          this.update(dados)
+        }
+      }, 500)
     },
     insert (dados) {
       this.loading = true

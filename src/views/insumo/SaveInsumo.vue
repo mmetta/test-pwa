@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-form @submit.prevent="save" ref="form" class="mx-4">
+    <!-- <v-form @submit.prevent="save" ref="form" class="mx-4"> -->
       <v-row class="justify-center">
         <v-col cols="12" sm="6" class="secondary">
           <h3 class="success--text ma-3">{{ fazer }}{{ ' INSUMO' }}</h3>
@@ -82,10 +82,10 @@
                   <v-col cols="6" class="px-4">
                     <v-row class="justify-center">
                       <v-btn
+                        :loading="loading"
                         fab
                         small
                         color="secondary primary--text"
-                        :loading="loading"
                         @click="$router.go(-1)"
                       >
                         <v-icon class="mr-1">mdi-arrow-left-bold</v-icon>
@@ -95,12 +95,12 @@
                   <v-col cols="6" class="px-4">
                     <v-row class="justify-center">
                       <v-btn
+                        :loading="loading"
                         block
                         height="44"
                         tile color="success"
                         :disabled="!formIsValid"
-                        :loading="loading"
-                        type="submit"
+                        @click="loading = !loading; save()"
                       >
                         <v-icon class="mr-1">mdi-content-save-outline</v-icon>
                         {{ fazer }}
@@ -113,7 +113,7 @@
           </v-col>
         </v-row>
 
-      </v-form>
+      <!-- </v-form> -->
 
   <template>
     <v-dialog
@@ -206,28 +206,30 @@ export default {
   methods: {
     save () {
       if (!this.formIsValid) {
+        this.loading = false
         return
       }
-      const dados = {
-        id: this.id,
-        nome: this.nome,
-        tamanho: Number(this.tamanho),
-        unidade: this.unidade,
-        preco: parseFloat(this.preco)
-      }
-      if (this.id === 'new') {
-        this.insert(dados)
-      } else {
-        this.update(dados)
-      }
+      setTimeout(() => {
+        console.log(this.loading)
+        const dados = {
+          id: this.id,
+          nome: this.nome,
+          tamanho: Number(this.tamanho),
+          unidade: this.unidade,
+          preco: parseFloat(this.preco)
+        }
+        if (this.id === 'new') {
+          this.insert(dados)
+        } else {
+          this.update(dados)
+        }
+      }, 500)
     },
     insert (dados) {
-      this.loading = true
       this.$store.dispatch('createInsumo', dados)
       this.$router.push('/insumo')
     },
     update (dados) {
-      this.loading = true
       const alterouPreco = this.preco !== parseFloat(this.insumo.preco).toFixed(2)
       this.$store.dispatch('updateInsumo', dados)
       if (alterouPreco) {
