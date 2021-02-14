@@ -8,7 +8,10 @@ const state = {
   custo: {},
   searchcustos: [],
   search4: '',
-  id: '0'
+  id: '0',
+  dialogListaCustos: false,
+  soma: '',
+  resumo: []
 }
 
 const getters = {
@@ -30,6 +33,15 @@ const getters = {
   },
   search4 (state) {
     return state.search4
+  },
+  dialogListaCustos (state) {
+    return state.dialogListaCustos
+  },
+  soma (state) {
+    return state.soma
+  },
+  resumo (state) {
+    return state.resumo
   }
 }
 
@@ -60,6 +72,7 @@ const actions = {
               outros: obj[key].outros,
               outrosDescricao: obj[key].outrosDescricao,
               arredondar: obj[key].arredondar,
+              total: obj[key].total,
               modificado: obj[key].modificado
             })
           }
@@ -75,6 +88,7 @@ const actions = {
       outros: payload.outros,
       outrosDescricao: payload.outrosDescricao,
       arredondar: payload.arredondar,
+      total: payload.total,
       modificado: payload.modificado
     }
     const uid = Store.state.user.id
@@ -120,6 +134,9 @@ const actions = {
     if (payload.arredondar) {
       updateObj.arredondar = payload.arredondar
     }
+    if (payload.total) {
+      updateObj.total = payload.total
+    }
     if (payload.modificado) {
       updateObj.modificado = payload.modificado
     }
@@ -154,6 +171,15 @@ const actions = {
   setSearch4 ({ commit }, value) {
     commit('setSearch4', value)
     commit('searchcustos', value)
+  },
+  setDialogListaCustos ({ commit }, value) {
+    commit('setDialogListaCustos', value)
+  },
+  transpSoma ({ commit }, soma) {
+    commit('transpSoma', soma)
+  },
+  transpResumo ({ commit }, resumo) {
+    commit('transpResumo', resumo)
   }
 }
 
@@ -208,6 +234,9 @@ const mutations = {
     if (payload.arredondar) {
       custo.arredondar = payload.arredondar
     }
+    if (payload.total) {
+      custo.total = payload.total
+    }
     if (payload.modificado) {
       custo.modificado = payload.modificado
     }
@@ -232,6 +261,15 @@ const mutations = {
       })
     }
     state.searchcustos = res
+  },
+  setDialogListaCustos (state, value) {
+    state.dialogListaCustos = value
+  },
+  transpSoma (state, soma) {
+    state.soma = soma
+  },
+  transpResumo (state, resumo) {
+    state.resumo = resumo
   }
 }
 

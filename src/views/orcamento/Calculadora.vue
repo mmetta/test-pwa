@@ -192,7 +192,7 @@
                   outlined
                   rows="2"
                   counter
-                  maxlength="50"
+                  maxlength="80"
                   label="Outros custos"
                   placeholder="embalagem, entrega, etc."
                 ></v-textarea>
@@ -340,8 +340,8 @@
                   v-model="nome"
                   type="text"
                   :rules="rules"
-                  counter="95"
-                  max="95"
+                  counter="100"
+                  maxlength="100"
                   required
                 ></v-text-field>
               </v-card-text>
@@ -383,8 +383,8 @@
                   v-model="nome"
                   type="text"
                   :rules="rules"
-                  counter="95"
-                  max="95"
+                  counter="100"
+                  maxlength="100"
                   required
                 ></v-text-field>
               </v-card-text>
@@ -426,8 +426,8 @@
                   v-model="nome"
                   type="text"
                   :rules="rules"
-                  counter="95"
-                  max="95"
+                  counter="100"
+                  maxlength="100"
                   required
                 ></v-text-field>
               </v-card-text>
@@ -487,7 +487,7 @@ export default {
       active: '',
       rules: [
         v => (v && v.length >= 3) || 'Min. 3 caracteres',
-        v => (v && v.length <= 50) || 'Máx. 50 caracteres'
+        v => (v && v.length <= 100) || 'Máx. 100 caracteres'
       ],
       margemSelect: [
         { margem: 2.0, text: '100%' },
@@ -721,6 +721,7 @@ export default {
         outros: this.outrosValor,
         outrosDescricao: this.outrosDescricao,
         arredondar: this.arredondar,
+        total: this.total,
         modificado: new Date().toISOString().substr(0, 10) + ' ' + this.horaAtual()
       }
       this.$store.dispatch('createcusto', custo)
@@ -734,6 +735,7 @@ export default {
         outros: this.outrosValor,
         outrosDescricao: this.outrosDescricao,
         arredondar: this.arredondar,
+        total: this.total,
         modificado: new Date().toISOString().substr(0, 10) + ' ' + this.horaAtual()
       }
       if (this.id === '0') {

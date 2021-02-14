@@ -71,6 +71,7 @@ export default {
       { name: 'Insumo', icon: 'mdi-view-dashboard', path: '/insumo' },
       { name: 'Receita', icon: 'mdi-cupcake', path: '/receita' },
       // { name: 'Orçamento', icon: 'mdi-clipboard-list-outline', path: '/orcamento' },
+      { name: 'Orçamento', icon: 'mdi-clipboard-list-outline', path: '/orcamento/0' },
       { name: 'Calculadora', icon: 'mdi-calculator', path: '/calculadora' },
       { name: 'Donativo', icon: 'mdi-currency-usd', path: '/donativo' }
     ]

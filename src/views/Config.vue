@@ -3,7 +3,7 @@
     <v-row class="justify-center">
       <v-col cols="12" sm="8">
         <v-row class="justify-center teal lighten-5 py-4">
-          <h4>Configurações do APP</h4>
+          <h4>CONFIGURAÇÕES DO APP</h4>
         </v-row>
       </v-col>
     </v-row>
@@ -38,6 +38,71 @@
           </v-row>
         </v-col>
       </v-row>
+
+      <!-- Formas de pagemento padrão -->
+      <v-row class="justify-center">
+        <v-col cols="12" sm="8">
+          <v-row class="justify-center teal lighten-5 py-4">
+            <h4>Formas de pagamento padrão</h4>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row class="justify-center my-4">
+        <v-col cols="10" sm="6">
+          <v-textarea
+            color="success"
+            v-model="pgto"
+            outlined
+            rows="4"
+            counter
+            :rules="rulePgto"
+            maxlength="150"
+            label="Formas de pagamento"
+            placeholder="Formas de pagamento aceitas por você ..."
+          ></v-textarea>
+        </v-col>
+      </v-row>
+      <v-row class="justify-center mb-4">
+        <v-btn
+          small
+          color="success"
+          rounded
+          :disabled="!formIsValid"
+          @click="salvarPgto()"
+        >
+          <v-icon small>mdi-pencil</v-icon>
+          salvar
+        </v-btn>
+      </v-row>
+      <!-- FIM Formas de pagemento padrão -->
+
+      <!-- Imagem para orçamento -->
+      <v-row class="justify-center">
+        <v-col cols="12" sm="8">
+          <v-row class="justify-center teal lighten-5 py-4">
+            <h4>Sua imagem no orçamento</h4>
+          </v-row>
+        </v-col>
+      </v-row>
+        <v-row class="justify-center">
+          <v-img id="myImg" max-width="120" max-height="120" :src="ph" alt="sua imagem" />
+        </v-row>
+      <v-row class="justify-center my-4">
+          <v-btn
+            icon
+            color="success"
+            title="Alterar"
+            @click="editarPhoto()"
+          >
+            <v-icon>mdi-upload</v-icon>
+            Trocar imagem
+          </v-btn>
+      </v-row>
+      <!-- FIM Imagem para orçamento -->
+
+    <!-- Dialog para alterar Foto do perfil -->
+      <SetPhotoURL />
+    <!-- FIM Dialog para alterar Foto do perfil -->
 
           <!-- Dialog para alterar o bases de cálculo -->
             <v-dialog
@@ -92,9 +157,21 @@
 </template>
 
 <script>
+import SetPhotoURL from '../components/User/SetPhotoURL'
+
 export default {
   name: 'Config',
+  components: {
+    SetPhotoURL
+  },
   computed: {
+    formIsValid () {
+      return this.pgto.length >= 10
+    },
+    formasPgto () {
+      const pg = this.$store.getters.config.formasPgto
+      return pg
+    },
     processamento () {
       let proc = this.$store.getters.config.processamento
       proc = proc ? (proc - 1) * 100 : 30
@@ -116,8 +193,14 @@ export default {
   created () {
     this.config = this.$store.getters.config
   },
+  mounted () {
+    this.pgto = this.formasPgto || ''
+  },
   data () {
     return {
+      loading: false,
+      ph: this.$store.getters.user.photoURL,
+      pgto: '',
       dialogBase: false,
       config: '',
       mp: '',
@@ -136,6 +219,10 @@ export default {
         { value: 3.0, text: '200%' },
         { value: 3.5, text: '250%' },
         { value: 4.0, text: '300%' }
+      ],
+      rulePgto: [
+        v => (v && v.length >= 10) || 'Min. 10 caracteres',
+        v => (v && v.length <= 150) || 'Máx. 150 caracteres'
       ]
     }
   },
@@ -163,6 +250,19 @@ export default {
       }
       this.$store.dispatch('setConfig', bases)
       this.cancelarBase()
+    },
+    salvarPgto () {
+      if (!this.pgto) {
+        return
+      }
+      const pg = {
+        id: this.config.id,
+        formasPgto: this.pgto
+      }
+      this.$store.dispatch('setConfig', pg)
+    },
+    editarPhoto () {
+      this.$store.dispatch('setDialogPhoto', true)
     }
   }
 }

@@ -54,6 +54,9 @@
                     <v-list-item-title :id="custo.nome" v-text="custo.nome"></v-list-item-title>
                     <v-list-item-subtitle>
                       {{ formatDate(custo.modificado) }}
+                      <strong class="ml-5">
+                        {{ 'R$ ' + total(custo) }}
+                      </strong>
                     </v-list-item-subtitle>
                   </v-list-item-content>
 
@@ -120,11 +123,18 @@
 </template>
 
 <script>
+import { tipoArr } from '../../plugins/arredondar'
 
 export default {
   computed: {
     custos () {
       return this.$store.getters.searchcustos
+    },
+    receitas () {
+      return this.$store.getters.receitas
+    },
+    margem () {
+      return this.$store.getters.config.margem
     }
   },
   watch: {
@@ -180,6 +190,25 @@ export default {
         this.$store.dispatch('deletecusto', custo.id)
       }
       this.setSearch()
+    },
+    total (custo) {
+      let subtotal = 0
+      for (let i = 0; i < custo.receitas.length; i++) {
+        const item = custo.receitas[i]
+        const receita = this.receitas.find((receita) => {
+          return receita.id === item.id
+        })
+        const valorUnit = receita.total / receita.rendimento
+        const valorTotal = parseFloat(item.quant * valorUnit).toFixed(2)
+        subtotal += parseFloat(valorTotal)
+      }
+      subtotal *= this.margem
+      if (custo.outros > 0) {
+        subtotal += Number(custo.outros)
+      }
+      const valor = tipoArr(custo.arredondar, subtotal)
+      const total = parseFloat(valor).toFixed(2)
+      return total
     },
     formatDate (d) {
       if (!d) return null

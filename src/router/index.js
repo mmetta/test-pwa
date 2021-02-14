@@ -12,6 +12,7 @@ import Receita from '../views/receita/Receitas.vue'
 import SaveReceita from '../views/receita/SaveReceita.vue'
 import Calculadora from '../views/orcamento/Calculadora.vue'
 import Custo from '../views/orcamento/Custos.vue'
+import SaveOrcamento from '../views/orcamento/SaveOrcamento.vue'
 import Donativo from '../views/Donativo.vue'
 import Config from '../views/Config.vue'
 
@@ -102,6 +103,16 @@ const routes = [
     path: '/custo',
     name: 'Custo',
     component: Custo,
+    beforeEnter: AuthGuard,
+    meta: {
+      icon: 'mdi-calculator'
+    }
+  },
+  {
+    path: '/orcamento/:id',
+    name: 'SaveOrcamento',
+    props: true,
+    component: SaveOrcamento,
     beforeEnter: AuthGuard,
     meta: {
       icon: 'mdi-calculator'

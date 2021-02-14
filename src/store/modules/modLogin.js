@@ -350,7 +350,8 @@ const actions = {
             id: key,
             basica: obj[key].basica,
             margem: obj[key].margem,
-            processamento: obj[key].processamento
+            processamento: obj[key].processamento,
+            formasPgto: obj[key].formasPgto
           })
         }
         commit('loadConfig', config[0])
@@ -360,7 +361,8 @@ const actions = {
     const config = {
       basica: payload.basica,
       margem: payload.margem,
-      processamento: payload.processamento
+      processamento: payload.processamento,
+      formasPgto: payload.formasPgto
     }
     const uid = state.user.id
     let key
@@ -468,6 +470,9 @@ const mutations = {
     }
     if (payload.margem) {
       state.config.margem = payload.margem
+    }
+    if (payload.formasPgto) {
+      state.config.formasPgto = payload.formasPgto
     }
   },
   clearError: (state) => {
