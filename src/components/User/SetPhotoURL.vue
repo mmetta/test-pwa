@@ -8,8 +8,11 @@
     >
       <v-card>
         <v-card-title primary-title>
-          Alterar Foto
+          Sua Imagem
         </v-card-title>
+        <v-card-subtitle>
+          Permitido até 600 x 600 px
+        </v-card-subtitle>
         <form>
           <v-card-text>
         <v-row class="justify-center">
@@ -19,7 +22,7 @@
             color="grey"
           >
             <template v-if="photo">
-              <img :src="photo" title="Foto do perfil">
+              <img :src="photo" title="Foto do perfil" id="photo">
             </template>
             <template v-else>
               <v-icon x-large class="white--text">mdi-account</v-icon>
@@ -126,7 +129,6 @@ export default {
         this.photo = fileReader.result
       })
       fileReader.readAsDataURL(files[0])
-
       this.arquivo = files[0]
     },
     openFileDialog () {
@@ -141,16 +143,26 @@ export default {
       if (!this.fileName) {
         return
       }
-      this.salvando = true
-      const nova = {
-        fileName: this.fileName,
-        photo: this.arquivo
+      const h = document.getElementById('photo').naturalHeight
+      const w = document.getElementById('photo').naturalWidth
+      if (parseInt(h) > 600 || parseInt(w) > 600) {
+        this.$toast.error('Imagem: ' + w + ' x ' + h + ', excede tamanho máximo.', {
+          position: 'bottom-center',
+          icon: 'mdi mdi-clipboard-list-outline',
+          timeout: 5000
+        })
+      } else {
+        this.salvando = true
+        const nova = {
+          fileName: this.fileName,
+          photo: this.arquivo
+        }
+        // this.$store.dispatch('setDataURL', this.photo)
+        this.$store.dispatch('setPhoto', nova)
+        setTimeout(() => {
+          this.cancelarPhoto()
+        }, 4000)
       }
-      // this.$store.dispatch('setDataURL', this.photo)
-      this.$store.dispatch('setPhoto', nova)
-      setTimeout(() => {
-        this.cancelarPhoto()
-      }, 4000)
     }
   }
 }

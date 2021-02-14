@@ -72,6 +72,9 @@ import { tipoArr } from '../../plugins/arredondar'
 
 export default {
   name: 'ListaCustos',
+  created () {
+    this.$store.dispatch('setSortDate', 'date')
+  },
   computed: {
     margem () {
       return this.$store.getters.config.margem
