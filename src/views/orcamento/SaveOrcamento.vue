@@ -200,12 +200,13 @@
             <v-btn
               small
               text
+              right
               color="success"
               title="Alterar"
               @click="editarPgto = !editarPgto"
             >
-              <v-icon small>mdi-pencil-outline</v-icon>
               Editar
+              <v-icon small>mdi-pencil-outline</v-icon>
             </v-btn>
           </v-row>
         </v-col>
@@ -233,14 +234,20 @@
               placeholder="Anote aqui outras informações importantes"
             ></v-textarea>
           </v-row>
-          <v-row>
-            <v-checkbox
-              v-model="obs"
-              :label="obsLabel"
+
+          <v-row class="justify-center pt-2">
+            <v-btn
+              small
+              text
               color="success"
-              hide-details
-            ></v-checkbox>
+              title="Observações"
+              @click="obs = !obs"
+            >
+              <v-icon small>{{ obsIcon }}</v-icon>
+              {{ obsLabel }}
+            </v-btn>
           </v-row>
+
         </v-col>
       </v-row>
 
@@ -308,6 +315,9 @@ export default {
     },
     obsLabel () {
       return this.obs ? 'Cancelar' : 'Mais informações ?'
+    },
+    obsIcon () {
+      return this.obs ? 'mdi-close' : 'mdi-plus'
     },
     soma () {
       return this.$store.getters.soma

@@ -15,27 +15,23 @@
       <v-card-text>
         <v-row class="justify-center">
           <v-col cols="12">
-            <v-list shaped class="ma-2">
+            <v-list three-line shaped>
               <v-list-item-group multiple active-class="" v-model="active" color="success">
                  <!-- aria-selected="active" -->
-                <v-list-item v-for="custo in custos" :key="custo.id">
+                <v-list-item class="grey lighten-5 mb-1" v-for="custo in custos" :key="custo.id">
                   <template v-slot:default="{ active }">
-                    <v-list-item-action>
-                      <v-checkbox :input-value="active"></v-checkbox>
+                    <v-list-item-action v-show="false">
+                      <v-checkbox small :input-value="active"></v-checkbox>
                     </v-list-item-action>
-                    <v-list-item-content @click="abrir(custo)">
-                      <v-list-item-title :id="custo.nome" v-text="custo.nome"></v-list-item-title>
+                    <v-list-item-content>
+                      <v-list-item-subtitle class="black--text" :id="custo.nome" v-html="nome(custo.nome)"></v-list-item-subtitle>
                       <v-list-item-subtitle>
                         {{ formatDate(custo.modificado) }}
+                        <strong class="ml-5">
+                          {{ 'R$ ' + total(custo) }}
+                        </strong>
                       </v-list-item-subtitle>
                     </v-list-item-content>
-                    <v-list-item-action>
-                        <v-btn
-                          text
-                        >
-                          {{ total(custo) }}
-                        </v-btn>
-                    </v-list-item-action>
                   </template>
                 </v-list-item>
               </v-list-item-group>
@@ -132,13 +128,13 @@ export default {
         offset: 0,
         easing: 'linear'
       },
-      tSoma: false,
-      tResumo: false
+      tSoma: true,
+      tResumo: true
     }
   },
   methods: {
-    abrir (v) {
-      console.log(v, this.active)
+    nome (nome) {
+      return '<span>' + nome + '</span>'
     },
     fechar () {
       this.$store.dispatch('setDialogListaCustos', false)
@@ -163,6 +159,10 @@ export default {
       return total
     },
     transporte (soma) {
+      if (this.active.length <= 0) {
+        this.fechar()
+        return
+      }
       if (this.tSoma) {
         this.$store.dispatch('transpSoma', soma)
       }

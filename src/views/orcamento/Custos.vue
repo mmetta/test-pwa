@@ -25,33 +25,36 @@
                 clearable
               ></v-text-field>
             </v-toolbar>
+
+              <v-row class="justify-center mt-4">
+                <v-col cols="8">
+                  <small class="success--text">Ordenado por: </small>
+                  <v-btn
+                    small
+                    @click="sort('nome')"
+                    :color="order==='nome'?'success':'grey'"
+                    text
+                  >nome</v-btn>
+                  <v-btn
+                    small
+                    @click="sort('date')"
+                    :color="order==='date'?'success':'grey'"
+                    text
+                  >data</v-btn>
+                </v-col>
+              </v-row>
+
             </v-row>
           </v-col>
         </v-row>
-        <v-row class="justify-center mt-4">
-          <v-col cols="8">
-            <small class="success--text">Ordenado por: </small>
-            <v-btn
-              small
-              @click="sort('nome')"
-              :color="order==='nome'?'success':'grey'"
-              text
-            >nome</v-btn>
-            <v-btn
-              small
-              @click="sort('date')"
-              :color="order==='date'?'success':'grey'"
-              text
-            >data</v-btn>
-          </v-col>
-        </v-row>
+
         <v-row class="justify-center">
           <v-col cols="12" sm="6">
-            <v-list shaped class="ml-4 mr-2">
+            <v-list three-line shaped class="ml-4 mr-2">
               <v-list-item-group v-model="active" color="success">
-                <v-list-item v-for="custo in custos" :key="custo.id" aria-selected="active">
+                <v-list-item class="teal lighten-5 mb-1" v-for="custo in custos" :key="custo.id" aria-selected="active">
                   <v-list-item-content @click="abrir(custo)">
-                    <v-list-item-title :id="custo.nome" v-text="custo.nome"></v-list-item-title>
+                    <v-list-item-subtitle class="black--text" :id="custo.nome" v-html="nome(custo.nome)"></v-list-item-subtitle>
                     <v-list-item-subtitle>
                       {{ formatDate(custo.modificado) }}
                       <strong class="ml-5">
@@ -65,7 +68,7 @@
                         icon
                         @click="excluir(custo)"
                       >
-                        <v-icon color="grey">mdi-trash-can-outline</v-icon>
+                        <v-icon small color="primary">mdi-trash-can-outline</v-icon>
                       </v-btn>
                   </v-list-item-action>
 
@@ -149,6 +152,7 @@ export default {
     this.tipo = '1'
     // valor inicial do search
     this.$store.dispatch('setSearch4', '')
+    this.$store.dispatch('setSortDate', 'date')
     // console.log(window.outerWidth)
   },
   data () {
@@ -170,6 +174,9 @@ export default {
     }
   },
   methods: {
+    nome (nome) {
+      return '<span>' + nome + '</span>'
+    },
     sort (s) {
       this.order = s
       this.$store.dispatch('setSortDate', s)
