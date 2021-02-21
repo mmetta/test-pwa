@@ -389,7 +389,6 @@ const actions = {
       })
   },
   setConfig ({ commit }, payload) {
-    console.log(payload)
     const uid = state.user.id
     firebase.database().ref(uid + '/config').child(payload.id).update(payload)
       .then(() => {

@@ -127,8 +127,20 @@
         </v-col>
       </v-row>
       <v-row class="justify-center my-4">
-        <v-col cols="10" sm="6">
+        <v-col cols="12" sm="8">
           <v-row>
+            <v-data-table
+              :headers="colunas()"
+              :items="linha"
+              hide-default-footer
+              class="elevation-1 mx-0"
+              loading="true"
+              mobile-breakpoint="300"
+            >
+
+            </v-data-table>
+          </v-row>
+          <!-- <v-row>
             <v-textarea
               color="success"
               v-model="descricao"
@@ -140,9 +152,9 @@
               label="Descrição"
               placeholder="Faça uma breve descrição do pedido"
             ></v-textarea>
-          </v-row>
-          <v-row>
-            <v-col cols="5" class="py-0">
+          </v-row> -->
+          <v-row class="pt-2">
+            <v-col cols="5">
               <v-text-field
                 prefix="R$"
                 size="10"
@@ -151,8 +163,7 @@
                 step="0.01"
                 v-model="total"
                 label="Total"
-                @change="decimal()"
-                required
+                readonly
               ></v-text-field>
             </v-col>
             <v-col cols="7" class="pt-5">
@@ -161,10 +172,19 @@
                   small
                   text
                   color="success"
+                  @click="dialogItem = true"
+                >
+                  <v-icon small>mdi-plus</v-icon>
+                  Novo Item
+                </v-btn>
+                <v-btn
+                  small
+                  text
+                  color="warning"
                   @click="lista()"
                 >
-                  <v-icon small>mdi-list</v-icon>
-                  Listar Custos
+                  <v-icon small>mdi-plus</v-icon>
+                  Custo
                 </v-btn>
               </v-row>
             </v-col>
@@ -228,7 +248,7 @@
               outlined
               rows="4"
               counter
-              :rules="ruleDescricao"
+              :rules="ruleObservacao"
               maxlength="200"
               label="Observação"
               placeholder="Anote aqui outras informações importantes"
@@ -264,6 +284,14 @@
         <v-row class="justify-center pb-5">
           <v-btn
             tile
+            @click="limparTudo()"
+          >
+            <v-icon class="mr-2 red--text">mdi-close</v-icon>
+            Limpar Tudo
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            tile
             :loading="loading"
             @click="gerarPDF()"
             :disabled="!formIsValid"
@@ -277,6 +305,76 @@
     </v-row>
 
     <lista-custos :dialog="dialog" />
+
+    <!-- Dialog para inclusão manual de itens no orçamento -->
+    <v-dialog
+      v-model="dialogItem"
+      scrollable
+      persistent
+      :overlay="false"
+      max-width="440px"
+      transition="dialog-transition"
+    >
+      <v-card>
+        <v-card-title primary-title>
+          {{ fazer }}{{ ' ' }} ITEM
+        </v-card-title>
+        <v-card-text>
+          <v-row class="pa-1">
+            <v-textarea
+              color="success"
+              v-model="desc"
+              outlined
+              rows="4"
+              counter
+              :rules="ruleDesc"
+              maxlength="120"
+              label="Descrição"
+              placeholder="Descrição do item"
+            ></v-textarea>
+          </v-row>
+          <v-row>
+            <v-col cols="6" class="pa-2">
+              <v-text-field
+                size="10"
+                color="success"
+                type="number"
+                v-model="qtd"
+                label="Quantidade"
+                required
+              ></v-text-field>
+            </v-col>
+            <v-col cols="6" class="pa-2">
+              <v-text-field
+                prefix="R$"
+                size="10"
+                color="success"
+                type="number"
+                step="0.01"
+                v-model="un"
+                label="Valor Unitário"
+                required
+              ></v-text-field>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            color="primary"
+            text
+            @click="dialogItem = false"
+          >fechar</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="success"
+            text
+            @click="insertLinha()"
+            :disabled="!itemIsValid"
+          >{{ fazer }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- FIM Dialog para inclusão manual de itens no orçamento -->
 
   </div>
 </template>
@@ -293,16 +391,21 @@ export default {
   computed: {
     formIsValid () {
       return this.cliente.length >= 3 &&
-      this.descricao.length >= 10 &&
-      this.formasPgto.length >= 10 &&
+      this.linha.length >= 0 &&
+      this.pgto.length >= 10 &&
       this.total > 0
+    },
+    itemIsValid () {
+      return this.qtd > 0 &&
+      this.desc.length >= 10 &&
+      this.un > 0
     },
     user () {
       return this.$store.getters.user
     },
     formasPgto () {
       const pg = this.$store.getters.config.formasPgto
-      return pg
+      return pg || ''
     },
     computedDateFormatted () {
       let time = ''
@@ -324,12 +427,18 @@ export default {
     },
     resumo () {
       return this.$store.getters.resumo
+    },
+    total () {
+      let total = 0
+      if (this.linha.length > 0) {
+        total = [].reduce.call(this.linha, (somatorio, el) => {
+          return somatorio + parseFloat(el.SUBTOTAL, 10) || 0
+        }, 0)
+      }
+      return parseFloat(total).toFixed(2)
     }
   },
   watch: {
-    soma (n) {
-      this.total = n
-    },
     resumo (res) {
       if (res.length > 0) {
         let descricao = ''
@@ -340,13 +449,30 @@ export default {
           }
           descricao += txt
         }
-        this.descricao = descricao
+        this.desc = descricao
+        this.qtd = 1
+        this.un = this.soma
+        this.insertLinha()
       }
     }
   },
   data () {
     return {
+      keys: [
+        // 'id',
+        'QUANT',
+        'ITENS',
+        'UNIT',
+        'SUBTOTAL'
+      ],
+      linha: [],
       dialog: false,
+      dialogItem: false,
+      fazer: 'INSERIR',
+      desc: '',
+      qtd: '',
+      un: '',
+      posX: 68,
       acombinar: false,
       obs: false,
       observacao: '',
@@ -355,7 +481,6 @@ export default {
       menu1: false,
       menu2: false,
       descricao: '',
-      total: '',
       cliente: '',
       editarPgto: false,
       pgto: '',
@@ -367,13 +492,61 @@ export default {
         v => (v && v.length >= 3) || 'Min. 3 caracteres',
         v => (v && v.length <= 100) || 'Máx. 100 caracteres'
       ],
-      ruleDescricao: [
+      ruleDesc: [
+        v => (v && v.length >= 10) || 'Min. 10 caracteres',
+        v => (v && v.length <= 120) || 'Máx. 120 caracteres'
+      ],
+      ruleObservacao: [
         v => (v && v.length >= 10) || 'Min. 10 caracteres',
         v => (v && v.length <= 200) || 'Máx. 200 caracteres'
       ],
       rulePgto: [
         v => (v && v.length >= 10) || 'Min. 10 caracteres',
         v => (v && v.length <= 150) || 'Máx. 150 caracteres'
+      ],
+      // Substituir por dados dinâmicos depois
+      linhas: [],
+      headers: [
+        // {
+        //   id: 'id',
+        //   name: 'id',
+        //   prompt: 'id',
+        //   width: 20,
+        //   align: 'center',
+        //   padding: 0
+        // },
+        {
+          id: 'QUANT',
+          name: 'QUANT',
+          prompt: 'QUANT',
+          width: 50,
+          align: 'center',
+          padding: 0
+        },
+        {
+          id: 'ITENS',
+          name: 'ITENS',
+          prompt: 'ITENS',
+          width: 100,
+          align: 'center',
+          padding: 0
+        },
+        {
+          id: 'UNIT',
+          name: 'UNIT',
+          prompt: 'UNIT',
+          width: 40,
+          align: 'center',
+          padding: 0
+        },
+        {
+          id: 'SUBTOTAL',
+          name: 'SUBTOTAL',
+          prompt: 'SUBTOTAL',
+          width: 60,
+          align: 'center',
+          padding: 0
+        }
       ]
     }
   },
@@ -384,6 +557,58 @@ export default {
     this.pgto = this.formasPgto || ''
   },
   methods: {
+    colunas () {
+      const colunas = []
+      for (let i = 0; i < this.keys.length; i++) {
+        const item = this.keys[i]
+        const col = {
+          text: item,
+          align: item === 'SUBTOTAL' ? 'end' : 'start',
+          sortable: false,
+          value: item
+        }
+        colunas.push(col)
+      }
+      return colunas
+    },
+    insertLinha () {
+      if (!this.desc) {
+        return
+      }
+      this.dialogItem = false
+
+      // Calcula subtotal
+      let sub = Number(this.qtd) * Number(this.un)
+      if (isNaN(sub)) {
+        sub = 0
+      }
+      const subtotal = parseFloat(sub).toFixed(2).toString()
+
+      const linha = {
+        // id: (this.linha.length + 1).toString(),
+        QUANT: (this.qtd).toString(),
+        ITENS: this.desc,
+        UNIT: parseFloat(this.un).toFixed(2).toString(),
+        SUBTOTAL: subtotal
+      }
+      this.limpaForm()
+      this.linha.push(linha)
+    },
+    generateData (linhas) {
+      var result = []
+      for (var i = 0; i < linhas.length; i += 1) {
+        const data = linhas[i]
+        const desc = data.ITENS.length / 30 > 1 ? data.ITENS.length / 30 : 1
+        const atual = Math.ceil(desc)
+        let mult = 10
+        if (atual > 1) { mult = 7 }
+        this.posX += atual * mult
+
+        // data.id = (i + 1).toString()
+        result.push(Object.assign({}, data))
+      }
+      return result
+    },
     lista () {
       this.$store.dispatch('setDialogListaCustos', true)
     },
@@ -400,7 +625,7 @@ export default {
       const email = this.user ? this.user.email : ''
       const cliente = this.cliente
       const entrega = this.acombinar ? 'à combinar' : this.computedDateFormatted
-      const descricao = this.descricao
+      // const descricao = this.descricao
       const valor = this.total
       const formasPgto = this.pgto
       const now = new Date()
@@ -410,7 +635,7 @@ export default {
       const doc = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
-        format: [120, 200]
+        format: [210, 297]
       })
 
       // base-64
@@ -438,80 +663,105 @@ export default {
       doc.setFont('helvetica', 'normal')
       doc.setTextColor(100)
       doc.text(cliente, 25, 50)
+
+      // Descrição
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(11)
       doc.setTextColor(0, 137, 123)
-      doc.text('DESCRIÇÃO', 60, 60, null, null, 'center')
+      doc.text('DESCRIÇÃO', 105, 60, null, null, 'center')
 
-      // linha Fucsia
+      // linha
       doc.setLineWidth(0.2)
-      doc.setDrawColor(216, 27, 96)
-      doc.line(10, 64, 110, 64)
+      doc.setDrawColor(160)
+      doc.line(10, 64, 200, 64)
+
       // Texto longo Descrição
-      const texto = doc.splitTextToSize(descricao, 95)
-      doc.setFontSize(10)
-      doc.setTextColor(150)
-      doc.text(15, 70, texto)
-      // linha Fucsia
-      doc.setLineWidth(0.2)
-      doc.setDrawColor(216, 27, 96)
-      doc.line(10, 86, 110, 86)
+      // const texto = doc.splitTextToSize(descricao, 95)
+      // doc.setFontSize(10)
+      // doc.setTextColor(150)
+      // doc.text(15, 70, texto)
 
+      // TABELA com a Descrição
+      const tableRows = this.generateData(this.linha)
+      doc.table(10, 68, tableRows, this.headers, {})
+      // FIM da TABELA com a Descrição
+
+      // linha
+      // this.posX += 12
+      // doc.setLineWidth(0.2)
+      // doc.setDrawColor(160)
+      // // linha Fucsia
+      // // doc.setDrawColor(216, 27, 96)
+      // doc.line(10, this.posX, 200, this.posX)
+
+      this.posX += 18
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(11)
       doc.setTextColor(0, 137, 123)
-      doc.text('Total:', 10, 95)
+      doc.text('Total:', 10, this.posX)
       doc.setFont('helvetica', 'bold')
       doc.setTextColor(150)
-      doc.text('R$ ' + valor, 25, 95)
+      doc.text('R$ ' + valor, 25, this.posX)
 
+      this.posX += 10
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(11)
       doc.setTextColor(0, 137, 123)
-      doc.text('Formas de pagamento:', 10, 102)
+      doc.text('Formas de pagamento:', 10, this.posX)
 
       // Texto longo Formas de Pagamento
-      const formas = doc.splitTextToSize(formasPgto, 95)
+      this.posX += 10
+      const formas = doc.splitTextToSize(formasPgto, 170)
       doc.setFontSize(10)
       doc.setTextColor(150)
-      doc.text(15, 110, formas)
+      doc.text(20, this.posX, formas)
 
+      this.posX += 18
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(11)
       doc.setTextColor(0, 137, 123)
-      doc.text('Entrega:', 10, 140)
+      doc.text('Entrega:', 10, this.posX)
       doc.setFont('helvetica', 'bold')
       doc.setTextColor(150)
-      doc.text(entrega, 30, 140)
+      doc.text(entrega, 30, this.posX)
 
-      let y = 160
+      this.posX += 8
+      // let y = 160
       if (this.obs) {
-        y = 180
+        // y = 180
         doc.setFont('helvetica', 'bold')
         doc.setFontSize(11)
         doc.setTextColor(0, 137, 123)
-        doc.text('Observação:', 10, 150)
+        doc.text('Observação:', 10, this.posX)
+
         // Texto longo Observações
-        const outros = doc.splitTextToSize(this.observacao, 95)
+        this.posX += 6
+        const outros = doc.splitTextToSize(this.observacao, 170)
         doc.setFontSize(10)
         doc.setTextColor(150)
-        doc.text(15, 156, outros)
+        doc.text(20, this.posX, outros)
       }
 
       // Linha final - assinatura do app
+      this.posX += 20
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(8)
       doc.setTextColor(180)
-      doc.text('SEUCUSTO - APP', 60, y, null, null, 'center')
+      doc.text('SEUCUSTO - APP', 105, this.posX, null, null, 'center')
       doc.setLineWidth(0.1)
       doc.setDrawColor(180)
-      doc.line(10, y - 3, 110, y - 3)
+      doc.line(10, this.posX - 3, 190, this.posX - 3)
 
-      // Salvae documento PDF em Downloads
-      doc.save(cliente + '.pdf')
-      setTimeout(() => {
-        this.loading = false
-      }, 5000)
+      // Salva o documento PDF em Downloads
+      try {
+        doc.save(cliente + '.pdf')
+        setTimeout(() => {
+          this.loading = false
+          this.limparTudo()
+        }, 5000)
+      } catch (error) {
+        console.log('Alguma coisa deu errado: ' + ErrorEvent)
+      }
     },
     formatDate (date) {
       if (!date) return null
@@ -530,6 +780,20 @@ export default {
       xhr.open('GET', url)
       xhr.responseType = 'blob'
       xhr.send()
+    },
+    limpaForm () {
+      this.un = ''
+      this.qtd = ''
+      this.desc = ''
+    },
+    limparTudo () {
+      this.cliente = ''
+      this.linha = []
+      this.observacao = ''
+      this.obs = false
+      this.acombinar = false
+      this.date = new Date().toISOString().substr(0, 10)
+      this.time = this.horaAtual()
     },
     decimal () {
       if (this.total === '') { return }
