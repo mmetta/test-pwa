@@ -128,8 +128,12 @@
       </v-row>
       <v-row class="justify-center my-4">
         <v-col cols="12" sm="8">
-          <v-row>
+          <v-row class="px-2">
             <v-data-table
+              show-select
+              :single-select="true"
+              item-key="ITENS"
+              v-model="selected"
               :headers="colunas()"
               :items="linha"
               hide-default-footer
@@ -153,7 +157,7 @@
               placeholder="Faça uma breve descrição do pedido"
             ></v-textarea>
           </v-row> -->
-          <v-row class="pt-2">
+          <v-row class="px-4 pt-2">
             <v-col cols="5">
               <v-text-field
                 prefix="R$"
@@ -167,10 +171,10 @@
               ></v-text-field>
             </v-col>
             <v-col cols="7" class="pt-5">
-              <v-row class="justify-center align-center">
+              <v-row v-if="selected.length <= 0" class="justify-center align-center">
                 <v-btn
                   small
-                  text
+                  rounded
                   color="success"
                   @click="dialogItem = true"
                 >
@@ -185,6 +189,17 @@
                 >
                   <v-icon small>mdi-plus</v-icon>
                   Custo
+                </v-btn>
+              </v-row>
+              <v-row v-else class="justify-center align-center">
+                <v-btn
+                  small
+                  rounded
+                  color="error"
+                  @click="excluirLinha()"
+                >
+                  <v-icon small>mdi-close</v-icon>
+                  Excluir Item
                 </v-btn>
               </v-row>
             </v-col>
@@ -281,17 +296,19 @@
 
     <v-row class="justify-center">
       <v-col cols="6">
-        <v-row class="justify-center pb-5">
+        <v-row class="justify-center pb-2">
           <v-btn
-            tile
+            rounded
+            class="ma-4"
             @click="limparTudo()"
           >
-            <v-icon class="mr-2 red--text">mdi-close</v-icon>
-            Limpar Tudo
+            <v-icon class="mr-2 success--text">mdi-circle-outline</v-icon>
+            Limpar
           </v-btn>
-          <v-spacer></v-spacer>
+
           <v-btn
             tile
+            class="ma-4"
             :loading="loading"
             @click="gerarPDF()"
             :disabled="!formIsValid"
@@ -353,6 +370,7 @@
                 step="0.01"
                 v-model="un"
                 label="Valor Unitário"
+                @change="decimal()"
                 required
               ></v-text-field>
             </v-col>
@@ -453,11 +471,14 @@ export default {
         this.qtd = 1
         this.un = this.soma
         this.insertLinha()
+        this.$store.dispatch('transpSoma', 0)
+        this.$store.dispatch('transpResumo', '')
       }
     }
   },
   data () {
     return {
+      selected: [],
       keys: [
         // 'id',
         'QUANT',
@@ -594,6 +615,13 @@ export default {
       this.limpaForm()
       this.linha.push(linha)
     },
+    excluirLinha () {
+      const ln = this.linha.filter((l) => {
+        return l !== this.selected[0]
+      })
+      this.selected = []
+      this.linha = ln
+    },
     generateData (linhas) {
       var result = []
       for (var i = 0; i < linhas.length; i += 1) {
@@ -631,6 +659,7 @@ export default {
       const now = new Date()
       const hora = this.horaAtual() + ':' + now.getSeconds()
       const dataHora = this.formatDate(now.toISOString().substr(0, 10)) + ' ' + hora
+
       // eslint-disable-next-line new-cap
       const doc = new jsPDF({
         orientation: 'portrait',
@@ -695,6 +724,12 @@ export default {
       // doc.line(10, this.posX, 200, this.posX)
 
       this.posX += 18
+      // Adiciona página
+      if (this.posX >= 290) {
+        this.posX = 10
+        doc.addPage([210, 297], 'portrait')
+      }
+
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(11)
       doc.setTextColor(0, 137, 123)
@@ -704,6 +739,12 @@ export default {
       doc.text('R$ ' + valor, 25, this.posX)
 
       this.posX += 10
+      // Adiciona página
+      if (this.posX >= 290) {
+        this.posX = 10
+        doc.addPage([210, 297], 'portrait')
+      }
+
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(11)
       doc.setTextColor(0, 137, 123)
@@ -711,12 +752,24 @@ export default {
 
       // Texto longo Formas de Pagamento
       this.posX += 10
+      // Adiciona página
+      if (this.posX >= 290) {
+        this.posX = 10
+        doc.addPage([210, 297], 'portrait')
+      }
+
       const formas = doc.splitTextToSize(formasPgto, 170)
       doc.setFontSize(10)
       doc.setTextColor(150)
       doc.text(20, this.posX, formas)
 
       this.posX += 18
+      // Adiciona página
+      if (this.posX >= 290) {
+        this.posX = 10
+        doc.addPage([210, 297], 'portrait')
+      }
+
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(11)
       doc.setTextColor(0, 137, 123)
@@ -726,6 +779,12 @@ export default {
       doc.text(entrega, 30, this.posX)
 
       this.posX += 8
+      // Adiciona página
+      if (this.posX >= 290) {
+        this.posX = 10
+        doc.addPage([210, 297], 'portrait')
+      }
+
       // let y = 160
       if (this.obs) {
         // y = 180
@@ -736,6 +795,13 @@ export default {
 
         // Texto longo Observações
         this.posX += 6
+
+        // Adiciona página
+        if (this.posX >= 290) {
+          this.posX = 10
+          doc.addPage([210, 297], 'portrait')
+        }
+
         const outros = doc.splitTextToSize(this.observacao, 170)
         doc.setFontSize(10)
         doc.setTextColor(150)
@@ -744,6 +810,13 @@ export default {
 
       // Linha final - assinatura do app
       this.posX += 20
+
+      // Adiciona página
+      if (this.posX >= 290) {
+        this.posX = 10
+        doc.addPage([210, 297], 'portrait')
+      }
+
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(8)
       doc.setTextColor(180)
@@ -796,8 +869,8 @@ export default {
       this.time = this.horaAtual()
     },
     decimal () {
-      if (this.total === '') { return }
-      this.total = parseFloat(this.total).toFixed(2)
+      if (this.un === '') { return }
+      this.un = parseFloat(this.un).toFixed(2)
     }
   }
 }
