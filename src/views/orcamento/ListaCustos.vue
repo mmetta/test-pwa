@@ -137,6 +137,7 @@ export default {
       return '<span>' + nome + '</span>'
     },
     fechar () {
+      this.active = []
       this.$store.dispatch('setDialogListaCustos', false)
     },
     total (custo) {
