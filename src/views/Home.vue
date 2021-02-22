@@ -38,6 +38,27 @@ export default {
   computed: {
     user () {
       return this.$store.getters.user
+    },
+    config () {
+      return this.$store.getters.config
+    }
+  },
+  created () {
+    this.$store.dispatch('loadConfig')
+  },
+  watch: {
+    config (n) {
+      const online = window.navigator.onLine
+      if (n === undefined && online) {
+        const config = {
+          basica: false,
+          margem: 3,
+          processamento: 1.3,
+          formasPgto: '',
+          photo: ''
+        }
+        this.$store.dispatch('createConfig', config)
+      }
     }
   },
   data () {

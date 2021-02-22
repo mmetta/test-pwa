@@ -506,7 +506,7 @@ export default {
       editarPgto: false,
       pgto: '',
       photo: '',
-      ph: this.$store.getters.user.photoURL,
+      ph: this.$store.getters.config.photo,
       loading: false,
       imgAsBase64: null,
       ruleCliente: [

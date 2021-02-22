@@ -191,7 +191,6 @@ const actions = {
     commit('setLoading', true)
     firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
       .then((e) => {
-        console.log(e)
         commit('setLoading', false)
       }
       )
@@ -322,20 +321,34 @@ const actions = {
     uploadTask.then((snapshot) => {
       snapshot.ref.getDownloadURL().then((downloadURL) => {
         const user = firebase.auth().currentUser
-        user.updateProfile({
-          photoURL: downloadURL
-        }).then(() => {
-          commit('setPhoto', downloadURL)
-        }).catch((error) => {
-          console.log(error)
-          const snack = {
-            snackbar: true,
-            color: 'error',
-            timeout: 6000,
-            message: 'Erro ao atualizar foto'
-          }
-          commit('snack', snack)
-        })
+        // veririca o tipo de login, se for externo não libera
+        if (user.providerId === 'firebase') {
+          user.updateProfile({
+            photoURL: downloadURL
+          }).then(() => {
+            commit('setPhoto', downloadURL)
+          }).catch((error) => {
+            console.log(error)
+            const snack = {
+              snackbar: true,
+              color: 'error',
+              timeout: 6000,
+              message: 'Erro ao atualizar foto'
+            }
+            commit('snack', snack)
+          })
+        }
+        const payload = {
+          id: state.config.id,
+          photo: downloadURL
+        }
+        firebase.database().ref(uid + '/config').child(payload.id).update(payload)
+          .then(() => {
+            commit('setConfig', payload)
+          })
+          .catch((error) => {
+            console.log(error)
+          })
       })
     })
   },
@@ -351,7 +364,8 @@ const actions = {
             basica: obj[key].basica,
             margem: obj[key].margem,
             processamento: obj[key].processamento,
-            formasPgto: obj[key].formasPgto
+            formasPgto: obj[key].formasPgto,
+            photo: obj[key].photo
           })
         }
         commit('loadConfig', config[0])
@@ -362,7 +376,8 @@ const actions = {
       basica: payload.basica,
       margem: payload.margem,
       processamento: payload.processamento,
-      formasPgto: payload.formasPgto
+      formasPgto: payload.formasPgto,
+      photo: payload.photo
     }
     const uid = state.user.id
     let key
@@ -472,6 +487,9 @@ const mutations = {
     }
     if (payload.formasPgto) {
       state.config.formasPgto = payload.formasPgto
+    }
+    if (payload.photo) {
+      state.config.photo = payload.photo
     }
   },
   clearError: (state) => {

@@ -77,6 +77,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'SetPhotoURL',
   computed: {
@@ -85,6 +86,9 @@ export default {
     },
     user () {
       return this.$store.getters.user
+    },
+    config () {
+      return this.$store.getters.config
     },
     fileName () {
       if (this.arquivo) {
@@ -100,12 +104,9 @@ export default {
       this.user = this.$store.getters.user
     }
   },
-  mounted () {
-    this.photo = this.user ? this.user.photoURL : ''
-  },
   data () {
     return {
-      photo: '',
+      photo: this.$store.getters.config.photo,
       image: null,
       arquivo: null,
       disabled: false,
@@ -115,7 +116,7 @@ export default {
   methods: {
     cancelarPhoto () {
       this.arquivo = null
-      this.photo = this.user ? this.user.photoURL : ''
+      this.photo = this.config ? this.config.photo : ''
       this.$store.dispatch('setDialogPhoto', false)
     },
     onFilePicked (event) {

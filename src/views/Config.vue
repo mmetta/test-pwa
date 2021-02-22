@@ -183,6 +183,9 @@ export default {
       margem = margem ? (margem - 1) * 100 : 200
       margem = Math.round(margem)
       return margem + '%'
+    },
+    ph () {
+      return this.$store.getters.config.photo
     }
   },
   watch: {
@@ -199,7 +202,7 @@ export default {
   data () {
     return {
       loading: false,
-      ph: this.$store.getters.user.photoURL,
+      // ph: this.$store.getters.user.photoURL,
       pgto: '',
       dialogBase: false,
       config: '',

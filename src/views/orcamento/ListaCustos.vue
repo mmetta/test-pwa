@@ -38,14 +38,14 @@
             </v-list>
           </v-col>
         </v-row>
-        <v-row>
+        <!-- <v-row>
           <v-col cols="6">
             <v-checkbox v-model="tResumo" :label="(resumo.length || 0) + ' nome(s)'"></v-checkbox>
           </v-col>
           <v-col cols="6">
             <v-checkbox v-model="tSoma" :label="'Total: ' + soma"></v-checkbox>
           </v-col>
-        </v-row>
+        </v-row> -->
       </v-card-text>
       <v-card-actions>
         <v-btn
