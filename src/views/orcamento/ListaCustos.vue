@@ -10,7 +10,7 @@
   >
     <v-card>
       <v-card-title primary-title>
-        Custos salvos
+        Preços salvos
       </v-card-title>
       <v-card-text>
         <v-row class="justify-center">
@@ -84,6 +84,9 @@ export default {
     receitas () {
       return this.$store.getters.receitas
     },
+    insumos () {
+      return this.$store.getters.insumos
+    },
     resumo () {
       const texto = []
       const n = this.active.length
@@ -144,10 +147,18 @@ export default {
       let subtotal = 0
       for (let i = 0; i < custo.receitas.length; i++) {
         const item = custo.receitas[i]
-        const receita = this.receitas.find((receita) => {
-          return receita.id === item.id
-        })
-        const valorUnit = receita.total / receita.rendimento
+        let valorUnit = 0
+        if (item.tipo === 'insumo') {
+          const insumo = this.insumos.find((insumo) => {
+            return insumo.id === item.id
+          })
+          valorUnit = insumo.preco / insumo.tamanho
+        } else {
+          const receita = this.receitas.find((receita) => {
+            return receita.id === item.id
+          })
+          valorUnit = receita.total / receita.rendimento
+        }
         const valorTotal = parseFloat(item.quant * valorUnit).toFixed(2)
         subtotal += parseFloat(valorTotal)
       }

@@ -188,7 +188,7 @@
                   @click="lista()"
                 >
                   <v-icon small>mdi-plus</v-icon>
-                  Custo
+                  Preço
                 </v-btn>
               </v-row>
               <v-row v-else class="justify-center align-center">
