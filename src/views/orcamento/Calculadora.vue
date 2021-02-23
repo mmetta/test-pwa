@@ -13,7 +13,7 @@
 
         <v-row>
           <v-col cols="12" class="success">
-            <h5 class="white--text ma-2">RECEITAS NECESSÁRIAS</h5>
+            <h5 class="white--text ma-2">ITENS NECESSÁRIOS</h5>
           </v-col>
         </v-row>
 
@@ -23,8 +23,8 @@
               <v-list-item-group v-model="active" color="success">
                 <v-list-item v-for="item in items" :key="item.id">
                   <v-list-item-avatar>
-                    <v-icon v-if="item.nome === select" color="red lighten-1" small>mdi-close</v-icon>
-                    <v-icon v-else color="teal lighten-1">mdi-square-small</v-icon>
+                    <v-icon v-if="item.tipo === 'receita'" color="success lighten-1" small>mdi-cupcake</v-icon>
+                    <v-icon v-else color="success lighten-1" small>mdi-view-dashboard</v-icon>
                   </v-list-item-avatar>
                   <v-list-item-content @click="alterar(item)">
                     <v-list-item-title :id="item.nome" v-text="item.nome"></v-list-item-title>
@@ -39,7 +39,7 @@
                       icon
                       @click="excluir(item)"
                     >
-                      <v-icon color="grey">mdi-trash-can-outline</v-icon>
+                      <v-icon small color="primary">mdi-trash-can-outline</v-icon>
                     </v-btn>
                   </v-list-item-action>
                 </v-list-item>
@@ -48,78 +48,26 @@
           </v-col>
         </v-row>
 
-        <!-- PEQUENO FORMULÁRIO PARA INCLUSÃO DE RECEITAS -->
-        <v-row class="justify-center align-center">
-          <v-col cols="12" lg="10">
-            <v-row class="justify-center">
-              <v-col cols="6" class="teal lighten-5">
-                <v-select
-                  id="selreceita"
-                  color="success"
-                  :items="receitas"
-                  item-value="id"
-                  item-text="nome"
-                  v-model="receita"
-                  label="receita"
-                ></v-select>
-              </v-col>
-              <v-col cols="6" class="px-2">
-                <v-text-field
-                  color="success"
-                  name="rend"
-                  label="Rendimento"
-                  id="rend"
-                  :value="select ? select.rendimento + ' ' + select.rendUnid : ''"
-                  tile
-                  disabled
-                  readonly
-                ></v-text-field>
-              </v-col>
-            </v-row>
-              <v-row class="justify-center">
-                <v-col cols="6" class="teal lighten-5">
-                  <v-text-field
-                    color="success"
-                    name="quant"
-                    label="Quant"
-                    id="quant"
-                    type="number"
-                    v-model="quant"
-                    :suffix="select ? select.rendUnid : ''"
-                    tile
-                    required
-                  ></v-text-field>
-                </v-col>
-              <v-col cols="6">
-                  <v-btn
-                    v-if="btn === 'new'"
-                    color="success"
-                    small
-                    rounded
-                    class="mr-2 mt-3"
-                    :disabled="disabled"
-                    @click="saveReceita()"
-                  >
-                    <v-icon>mdi-plus</v-icon>
-                    incluir
-                  </v-btn>
-                  <v-btn
-                    v-else
-                    color="warning"
-                    small
-                    rounded
-                    class="mr-2 mt-3"
-                    :disabled="disabled"
-                    @click="saveReceita()"
-                  >
-                    <v-icon>mdi-sync</v-icon>
-                    alterar
-                  </v-btn>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-        <!-- FIM DO PEQUENO FORMULÁRIO PARA INCLUSÃO DE RECEITAS -->
+      <v-row class="justify-center py-2">
+        <v-btn
+          small
+          rounded
+          class="grey lighten-5 success--text mx-2"
+          @click="fazer = 'Inserir'; dialog4 = true"
+        >
+          <v-icon class="mr-2">mdi-plus</v-icon>
+          Receita
+        </v-btn>
+        <v-btn
+          small
+          rounded
+          class="grey lighten-5 success--text mx-2"
+          @click="fazer = 'Inserir'; dialog5 = true"
+        >
+          <v-icon class="mr-2">mdi-plus</v-icon>
+          Insumo
+        </v-btn>
+      </v-row>
 
         <v-row>
           <v-col cols="12" class="success">
@@ -318,6 +266,9 @@
               </v-col>
             </v-row>
 
+            <!-- ***** FIM DA CALCULADORA ***** -->
+
+        <!-- Dialog para Salvar nome do Custo -->
         <template>
           <v-dialog
             v-model="dialog"
@@ -361,6 +312,7 @@
           </v-dialog>
         </template>
 
+        <!-- Dialog para Copiar e Salvar Como... um Custo -->
         <template>
           <v-dialog
             v-model="dialog2"
@@ -404,6 +356,7 @@
           </v-dialog>
         </template>
 
+        <!-- Dialog para alterar o nome de um Custo -->
         <template>
           <v-dialog
             v-model="dialog3"
@@ -447,6 +400,158 @@
           </v-dialog>
         </template>
 
+        <!-- Dialog para inserir/alterar RECEITAS -->
+        <template>
+          <v-dialog
+            v-model="dialog4"
+            scrollable
+            persistent
+            :overlay="false"
+            max-width="440px"
+            transition="dialog-transition"
+          >
+            <v-card>
+              <v-card-title primary-title>
+                <v-icon class="mr-2">mdi-cupcake</v-icon>
+                {{ fazer }}{{ ' ' }} RECEITA
+              </v-card-title>
+              <v-card-text>
+
+            <v-row class="justify-center">
+              <v-col cols="12">
+                <v-select
+                  id="selreceita"
+                  color="success"
+                  :items="receitas"
+                  item-value="id"
+                  item-text="nome"
+                  v-model="receita"
+                  label="receita"
+                ></v-select>
+              </v-col>
+            </v-row>
+            <v-row class="justify-center">
+              <v-col cols="6" class="px-2">
+                <v-text-field
+                  color="success"
+                  name="rend"
+                  label="Rendimento"
+                  id="rend"
+                  :value="select ? select.rendimento + ' ' + select.rendUnid : ''"
+                  tile
+                  disabled
+                  readonly
+                ></v-text-field>
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                    color="success"
+                    name="quant"
+                    label="Quant"
+                    id="quant"
+                    type="number"
+                    v-model="quant"
+                    :suffix="select ? select.rendUnid : ''"
+                    tile
+                    required
+                  ></v-text-field>
+                </v-col>
+            </v-row>
+
+              </v-card-text>
+              <v-card-actions>
+                <v-btn
+                  color="warning"
+                  text
+                  @click="limparForm(); dialog4 = false"
+                >Cancelar</v-btn>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="success"
+                  text
+                  @click="dialog4 = false; saveReceita()"
+                >{{ fazer }}</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </template>
+
+        <!-- Dialog para inserir/alterar INSUMOS -->
+        <template>
+          <v-dialog
+            v-model="dialog5"
+            scrollable
+            persistent
+            :overlay="false"
+            max-width="440px"
+            transition="dialog-transition"
+          >
+            <v-card>
+              <v-card-title primary-title>
+                <v-icon class="mr-2">mdi-view-dashboard</v-icon>
+                {{ fazer }}{{ ' ' }} INSUMO
+              </v-card-title>
+              <v-card-text>
+
+            <v-row class="justify-center">
+              <v-col cols="12">
+                <v-select
+                  id="selinsumo"
+                  color="success"
+                  :items="insumos"
+                  item-value="id"
+                  item-text="nome"
+                  v-model="insumo"
+                  label="insumo"
+                ></v-select>
+              </v-col>
+            </v-row>
+            <v-row class="justify-center">
+              <v-col cols="6" class="px-2">
+                <v-text-field
+                  color="success"
+                  name="medida"
+                  label="Medida"
+                  id="medida"
+                  :value="medida()"
+                  tile
+                  disabled
+                  readonly
+                ></v-text-field>
+                </v-col>
+                <v-col cols="6">
+                  <v-text-field
+                    color="success"
+                    name="quanti"
+                    label="Quant"
+                    id="quanti"
+                    type="number"
+                    v-model="quanti"
+                    :suffix="selecti ? selecti.unidade : ''"
+                    tile
+                    required
+                  ></v-text-field>
+                </v-col>
+            </v-row>
+
+              </v-card-text>
+              <v-card-actions>
+                <v-btn
+                  color="warning"
+                  text
+                  @click="limparForm(); dialog5 = false"
+                >Cancelar</v-btn>
+                <v-spacer></v-spacer>
+                <v-btn
+                  color="success"
+                  text
+                  @click="dialog5 = false; saveInsumo()"
+                >{{ fazer }}</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </template>
+
           <v-snackbar
             v-model="snackbar"
             :timeout="5000"
@@ -471,6 +576,9 @@ export default {
       dialog: false,
       dialog2: false,
       dialog3: false,
+      dialog4: false,
+      dialog5: false,
+      fazer: '',
       nome: '',
       itemAlterar: [],
       btn: 'new',
@@ -480,7 +588,9 @@ export default {
       items: [],
       item: '',
       receita: '',
+      insumo: '',
       quant: '',
+      quanti: '',
       margem: this.$store.getters.config.margem,
       snackbar: false,
       message: '',
@@ -506,6 +616,14 @@ export default {
         { value: '4', text: 'base 10,00' },
         { value: '5', text: 'base 10,00+' }
       ],
+      medidas: [
+        { text: 'centímetro(s)', value: 'cm' },
+        { text: 'grama(s)', value: 'g' },
+        { text: 'quilo(s)', value: 'Kg' },
+        { text: 'mililitro(s)', value: 'ml' },
+        { text: 'litro(s)', value: 'Lt' },
+        { text: 'unidade(s)', value: 'un' }
+      ],
       arredondar: '',
       loading: false
     }
@@ -523,7 +641,7 @@ export default {
       return this.$store.getters.custo(this.id)
     },
     titulo () {
-      return this.id !== '0' ? this.custo.nome : 'CALCULAR CUSTO'
+      return this.id !== '0' ? this.custo.nome : 'CALCULAR PREÇO'
     },
     varr () {
       let outros = this.outrosValor > 0 ? parseFloat(this.outrosValor) : 0
@@ -555,14 +673,26 @@ export default {
     disabled () {
       return !!(this.quant <= 0 || this.quant === '' || this.receita === '')
     },
+    disabledi () {
+      return !!(this.quanti <= 0 || this.quanti === '' || this.insumo === '')
+    },
     select () {
       const receita = this.receitas.find((receita) => {
         return receita.id === this.receita
       })
       return receita
     },
+    selecti () {
+      const insumo = this.insumos.find((insumo) => {
+        return insumo.id === this.insumo
+      })
+      return insumo
+    },
     receitas () {
       return this.$store.getters.receitas
+    },
+    insumos () {
+      return this.$store.getters.insumos
     },
     formIsValid () {
       if (this.items.length > 0 && this.total > 0) {
@@ -579,6 +709,9 @@ export default {
     receitas (value) {
       return value
     },
+    insumos (value) {
+      return value
+    },
     active (item) {
       if (item === undefined) {
         this.limparForm()
@@ -586,6 +719,13 @@ export default {
     }
   },
   methods: {
+    medida () {
+      const un = this.selecti ? this.selecti.unidade : ''
+      const medida = this.medidas.filter((m) => {
+        return m.value === un
+      })
+      return medida.length > 0 ? medida[0].text : ''
+    },
     abrir () {
       this.$router.push('/custo')
     },
@@ -602,6 +742,9 @@ export default {
     montar (custo) {
       for (let i = 0; i < custo.receitas.length; i++) {
         const item = custo.receitas[i]
+        if (!item.tipo) {
+          item.tipo = 'receita'
+        }
         this.incluirItem(item)
       }
       this.arredondar = custo.arredondar
@@ -612,16 +755,26 @@ export default {
       this.outrosDescricao = custo.outrosDescricao
     },
     incluirItem (item) {
-      const select = this.receitas.find((receita) => {
-        return receita.id === item.id
-      })
-      const valorUnit = select.total / select.rendimento
+      let valorUnit = 0
+      let select = []
+      if (item.tipo === 'insumo') {
+        select = this.insumos.find((insumo) => {
+          return insumo.id === item.id
+        })
+        valorUnit = select.preco / select.tamanho
+      } else {
+        select = this.receitas.find((receita) => {
+          return receita.id === item.id
+        })
+        valorUnit = select.total / select.rendimento
+      }
       const valorTotal = parseFloat(item.quant * valorUnit).toFixed(2)
       const receita = {
         id: select.id,
         nome: select.nome,
         quant: item.quant,
-        valor: valorTotal
+        valor: valorTotal,
+        tipo: item.tipo
       }
       this.items.push(receita)
     },
@@ -633,20 +786,36 @@ export default {
       }
     },
     alterar (item) {
+      this.fazer = 'Alterar'
+      this.btn = 'upd'
+      if (item.tipo === 'receita') {
+        this.alterarReceita(item)
+      } else {
+        this.alterarInsumo(item)
+      }
+    },
+    alterarReceita (item) {
+      this.dialog4 = true
       this.itemAlterar = item
       this.quant = item.quant
       this.receita = item.id
-      this.btn = 'upd'
     },
-    detectaDuplicidade () {
+    alterarInsumo (item) {
+      this.dialog5 = true
+      this.itemAlterar = item
+      this.quanti = item.quant
+      this.insumo = item.id
+    },
+    detectaDuplicidade (tipo) {
       let duplo = false
+      const select = tipo === 'r' ? this.select : this.selecti
       const check = this.items.find((item) => {
-        return item.id === this.select.id
+        return item.id === select.id
       })
       if (this.btn === 'new' && check !== undefined) {
         duplo = true
       }
-      if (this.btn === 'upd' && check !== undefined && this.select.id !== this.itemAlterar.id) {
+      if (this.btn === 'upd' && check !== undefined && select.id !== this.itemAlterar.id) {
         duplo = true
       }
       if (duplo) {
@@ -654,6 +823,8 @@ export default {
         this.snackbar = true
         this.receita = ''
         this.quant = ''
+        this.insumo = ''
+        this.quanti = ''
       }
       return duplo
     },
@@ -666,7 +837,7 @@ export default {
       this.limparForm()
     },
     saveReceita () {
-      if (this.detectaDuplicidade()) {
+      if (this.detectaDuplicidade('r')) {
         return
       }
       // preço calculado pelo valor unitário da receita, considerando o rendimento
@@ -676,7 +847,8 @@ export default {
         id: this.select.id,
         nome: this.select.nome,
         quant: this.quant,
-        valor: valorTotal
+        valor: valorTotal,
+        tipo: 'receita'
       }
       if (this.btn === 'new') {
         this.items.push(receita)
@@ -688,10 +860,38 @@ export default {
       this.ordenaItems()
       this.limparForm()
     },
+    saveInsumo () {
+      if (this.detectaDuplicidade('i')) {
+        return
+      }
+      // verifica o valor de cada unidade de medida
+      const valorUnit = this.selecti.preco / this.selecti.tamanho
+      const valorTotal = parseFloat(this.quanti * valorUnit).toFixed(2)
+      const insumo = {
+        id: this.selecti.id,
+        nome: this.selecti.nome,
+        quant: this.quanti,
+        valor: valorTotal,
+        tipo: 'insumo'
+      }
+      if (this.btn === 'new') {
+        this.items.push(insumo)
+      } else {
+        const index = this.items.indexOf(this.itemAlterar)
+        this.items.splice(index, 1, insumo)
+        this.active = undefined
+      }
+      this.ordenaItems()
+      this.limparForm()
+    },
     limparForm () {
+      this.active = ''
       this.quant = ''
       this.receita = ''
+      this.quanti = ''
+      this.insumo = ''
       this.btn = 'new'
+      this.fazer = 'Inserir'
       this.itemAlterar = []
     },
     ordenaItems () {
