@@ -15,7 +15,7 @@
                 hide-no-data
                 hide-details
                 solo-inverted
-                prepend-inner-icon="mdi-view-dashboard"
+                prepend-inner-icon="mdi-cupcake"
                 append-icon="mdi-magnify"
                 name="search"
                 label="Receita"
