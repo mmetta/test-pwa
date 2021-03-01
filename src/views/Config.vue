@@ -47,32 +47,58 @@
           </v-row>
         </v-col>
       </v-row>
-      <v-row class="justify-center my-4">
-        <v-col cols="10" sm="6">
+
+      <v-row class="justify-center grey--text px-4" v-if="!editarPgto">
+        <v-col cols="12" sm="8">
+          {{ pgto }}
+        </v-col>
+      </v-row>
+
+      <v-row v-else class="justify-center my-2 px-2">
+        <v-col cols="12" sm="8">
           <v-textarea
             color="success"
             v-model="pgto"
             outlined
-            rows="4"
+            rows="5"
             counter
             :rules="rulePgto"
-            maxlength="150"
+            maxlength="200"
             label="Formas de pagamento"
             placeholder="Formas de pagamento aceitas por você ..."
           ></v-textarea>
         </v-col>
       </v-row>
+
       <v-row class="justify-center mb-4">
-        <v-btn
-          small
-          color="success"
-          rounded
-          :disabled="!formIsValid"
-          @click="salvarPgto()"
-        >
-          <v-icon small>mdi-pencil</v-icon>
-          salvar
-        </v-btn>
+        <v-col cols="12" sm="8">
+          <v-btn
+            small
+            text
+            right
+            color="success"
+            class="mx-2"
+            title="Alterar"
+            @click="editarPgto = !editarPgto"
+          >
+            {{ editarPgto ? 'Cancelar' : 'Editar' }}
+            <v-icon class="primary--text" v-if="editarPgto" small>mdi-close</v-icon>
+            <v-icon v-else small>mdi-pencil-outline</v-icon>
+          </v-btn>
+
+          <v-btn
+            v-if="editarPgto"
+            small
+            color="success"
+            class="mx-2"
+            rounded
+            :disabled="!formIsValid"
+            @click="salvarPgto()"
+          >
+            <v-icon small>mdi-pencil</v-icon>
+            salvar
+          </v-btn>
+        </v-col>
       </v-row>
       <!-- FIM Formas de pagemento padrão -->
 
@@ -204,6 +230,7 @@ export default {
       loading: false,
       // ph: this.$store.getters.user.photoURL,
       pgto: '',
+      editarPgto: false,
       dialogBase: false,
       config: '',
       mp: '',
@@ -225,7 +252,7 @@ export default {
       ],
       rulePgto: [
         v => (v && v.length >= 10) || 'Min. 10 caracteres',
-        v => (v && v.length <= 150) || 'Máx. 150 caracteres'
+        v => (v && v.length <= 200) || 'Máx. 200 caracteres'
       ]
     }
   },
@@ -263,6 +290,7 @@ export default {
         formasPgto: this.pgto
       }
       this.$store.dispatch('setConfig', pg)
+      this.editarPgto = false
     },
     editarPhoto () {
       this.$store.dispatch('setDialogPhoto', true)

@@ -213,7 +213,7 @@
           </v-row>
         </v-col>
       </v-row>
-      <v-row class="justify-center my-4">
+      <v-row class="justify-center my-2">
         <v-col cols="10" sm="6">
           <v-row class="grey--text" v-if="!editarPgto">
             {{ pgto }}
@@ -223,10 +223,10 @@
               color="success"
               v-model="pgto"
               outlined
-              rows="4"
+              rows="5"
               counter
               :rules="rulePgto"
-              maxlength="150"
+              maxlength="200"
               label="Formas de pagamento"
               placeholder="Formas de pagamento aceitas por você"
             ></v-textarea>
@@ -240,8 +240,9 @@
               title="Alterar"
               @click="editarPgto = !editarPgto"
             >
-              Editar
-              <v-icon small>mdi-pencil-outline</v-icon>
+              {{ editarPgto ? 'Cancelar' : 'Editar' }}
+              <v-icon class="primary--text" v-if="editarPgto" small>mdi-close</v-icon>
+              <v-icon v-else small>mdi-pencil-outline</v-icon>
             </v-btn>
           </v-row>
         </v-col>
@@ -457,6 +458,11 @@ export default {
     }
   },
   watch: {
+    editarPgto (value) {
+      if (!value) {
+        this.pgto = this.formasPgto
+      }
+    },
     resumo (res) {
       if (res.length > 0) {
         let descricao = ''
@@ -523,7 +529,7 @@ export default {
       ],
       rulePgto: [
         v => (v && v.length >= 10) || 'Min. 10 caracteres',
-        v => (v && v.length <= 150) || 'Máx. 150 caracteres'
+        v => (v && v.length <= 200) || 'Máx. 200 caracteres'
       ],
       // Substituir por dados dinâmicos depois
       linhas: [],
@@ -760,7 +766,8 @@ export default {
 
       const formas = doc.splitTextToSize(formasPgto, 170)
       doc.setFontSize(10)
-      doc.setTextColor(150)
+      // doc.setTextColor(0, 137, 123)
+      doc.setTextColor(216, 27, 96)
       doc.text(20, this.posX, formas)
 
       this.posX += 18
