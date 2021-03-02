@@ -50,23 +50,46 @@
 
       <v-row class="justify-center grey--text px-4" v-if="!editarPgto">
         <v-col cols="12" sm="8">
-          {{ pgto }}
+          <v-row>
+            {{ pgto }}
+          </v-row>
+          <v-row>
+            <strong class="mr-2">Validade da proposta:</strong>
+            {{ validade }}
+            <span class="ml-2">{{ validade > 1 ? 'dias.' : 'dia.' }}</span>
+          </v-row>
         </v-col>
       </v-row>
 
       <v-row v-else class="justify-center my-2 px-2">
         <v-col cols="12" sm="8">
-          <v-textarea
-            color="success"
-            v-model="pgto"
-            outlined
-            rows="5"
-            counter
-            :rules="rulePgto"
-            maxlength="200"
-            label="Formas de pagamento"
-            placeholder="Formas de pagamento aceitas por você ..."
-          ></v-textarea>
+          <v-row>
+            <v-textarea
+              color="success"
+              v-model="pgto"
+              outlined
+              rows="5"
+              counter
+              :rules="rulePgto"
+              maxlength="200"
+              label="Formas de pagamento"
+              placeholder="Formas de pagamento aceitas por você ..."
+            ></v-textarea>
+          </v-row>
+          <v-row>
+            <v-col cols="6" class="pt-2">
+              <strong class="mr-2">Validade da proposta:</strong>
+            </v-col>
+            <v-col cols="6" class="pt-0">
+              <v-select
+                :items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 30]"
+                v-model="diasValidade"
+                label="Dia(s)"
+                type="number"
+                class="mx-2"
+              ></v-select>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
 
@@ -198,6 +221,10 @@ export default {
       const pg = this.$store.getters.config.formasPgto
       return pg
     },
+    validade () {
+      const val = this.$store.getters.config.validade
+      return val
+    },
     processamento () {
       let proc = this.$store.getters.config.processamento
       proc = proc ? (proc - 1) * 100 : 30
@@ -227,6 +254,7 @@ export default {
   },
   data () {
     return {
+      diasValidade: this.validade || 1,
       loading: false,
       // ph: this.$store.getters.user.photoURL,
       pgto: '',
@@ -287,7 +315,8 @@ export default {
       }
       const pg = {
         id: this.config.id,
-        formasPgto: this.pgto
+        formasPgto: this.pgto,
+        validade: this.diasValidade
       }
       this.$store.dispatch('setConfig', pg)
       this.editarPgto = false

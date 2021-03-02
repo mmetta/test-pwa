@@ -216,20 +216,49 @@
       <v-row class="justify-center my-2">
         <v-col cols="10" sm="6">
           <v-row class="grey--text" v-if="!editarPgto">
-            {{ pgto }}
+            <v-row>
+              <v-col cols="12">
+                {{ pgto }}
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12">
+                <strong class="mr-2">Validade da proposta:</strong>
+                {{ validade }}
+                <span class="ml-2">{{ validade > 1 ? 'dias.' : 'dia.' }}</span>
+              </v-col>
+            </v-row>
           </v-row>
           <v-row v-else>
-            <v-textarea
-              color="success"
-              v-model="pgto"
-              outlined
-              rows="5"
-              counter
-              :rules="rulePgto"
-              maxlength="200"
-              label="Formas de pagamento"
-              placeholder="Formas de pagamento aceitas por você"
-            ></v-textarea>
+            <v-row>
+              <v-textarea
+                color="success"
+                v-model="pgto"
+                outlined
+                rows="5"
+                counter
+                :rules="rulePgto"
+                maxlength="200"
+                label="Formas de pagamento"
+                placeholder="Formas de pagamento aceitas por você"
+              ></v-textarea>
+            </v-row>
+            <v-row>
+              <v-row>
+                <v-col cols="6" class="pt-2">
+                  <strong class="mr-2">Validade da proposta:</strong>
+                </v-col>
+                <v-col cols="6" class="pt-0">
+                  <v-select
+                    :items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 20, 30]"
+                    v-model="diasValidade"
+                    label="Dia(s)"
+                    type="number"
+                    class="mx-2"
+                  ></v-select>
+                </v-col>
+              </v-row>
+            </v-row>
           </v-row>
           <v-row class="justify-center pt-2">
             <v-btn
@@ -426,6 +455,10 @@ export default {
       const pg = this.$store.getters.config.formasPgto
       return pg || ''
     },
+    validade () {
+      const val = this.$store.getters.config.validade
+      return val
+    },
     computedDateFormatted () {
       let time = ''
       let date = ''
@@ -461,6 +494,7 @@ export default {
     editarPgto (value) {
       if (!value) {
         this.pgto = this.formasPgto
+        this.diasValidade = this.validade
       }
     },
     resumo (res) {
@@ -511,6 +545,7 @@ export default {
       cliente: '',
       editarPgto: false,
       pgto: '',
+      diasValidade: '',
       photo: '',
       ph: this.$store.getters.config.photo,
       loading: false,
@@ -582,6 +617,7 @@ export default {
       this.imgAsBase64 = data
     })
     this.pgto = this.formasPgto || ''
+    this.diasValidade = this.validade || 1
   },
   methods: {
     colunas () {
@@ -654,6 +690,23 @@ export default {
       if (M.length === 1) { M = '0' + M }
       return H + ':' + M
     },
+    setEnd (duracao, now, hora) {
+      const date = new Date(now).toISOString().substr(0, 10)
+      const start = new Date(date + ' ' + hora)
+      const tempo = (duracao * 24 * 60 * 60 * 1000)
+      const dia = new Date(start.getTime() + tempo)
+      let d = dia.getDate().toString()
+      d = d.length > 1 ? d : '0' + d
+      let mo = (dia.getMonth() + 1).toString()
+      mo = mo.length > 1 ? mo : '0' + mo
+      const dt = d + '/' + mo + '/' + dia.getFullYear()
+      let h = dia.getHours().toString()
+      h = h.length > 1 ? h : '0' + h
+      let m = dia.getMinutes().toString()
+      m = m.length > 1 ? m : '0' + m
+      const end = dt + ' ' + h + ':' + m + 'h'
+      return end
+    },
     gerarPDF () {
       this.loading = true
       const email = this.user ? this.user.email : ''
@@ -662,9 +715,11 @@ export default {
       // const descricao = this.descricao
       const valor = this.total
       const formasPgto = this.pgto
+      const validade = this.diasValidade
       const now = new Date()
       const hora = this.horaAtual() + ':' + now.getSeconds()
       const dataHora = this.formatDate(now.toISOString().substr(0, 10)) + ' ' + hora
+      const aguardar = this.setEnd(validade, now, hora)
 
       // eslint-disable-next-line new-cap
       const doc = new jsPDF({
@@ -744,6 +799,8 @@ export default {
       doc.setTextColor(150)
       doc.text('R$ ' + valor, 25, this.posX)
 
+      // Formas de Pagamento
+
       this.posX += 10
       // Adiciona página
       if (this.posX >= 290) {
@@ -769,6 +826,36 @@ export default {
       // doc.setTextColor(0, 137, 123)
       doc.setTextColor(216, 27, 96)
       doc.text(20, this.posX, formas)
+
+      // Validade da Proposta
+
+      this.posX += 16
+      // Adiciona página
+      if (this.posX >= 290) {
+        this.posX = 10
+        doc.addPage([210, 297], 'portrait')
+      }
+
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(11)
+      doc.setTextColor(0, 137, 123)
+      doc.text('Validade da proposta:', 10, this.posX)
+
+      // Texto longo Formas de Pagamento
+      this.posX += 10
+      // Adiciona página
+      if (this.posX >= 290) {
+        this.posX = 10
+        doc.addPage([210, 297], 'portrait')
+      }
+
+      const textoProposta = 'Aguardaremos sua aprovação até ' + aguardar + '. Depois disso o orçamento perderá a validade.'
+
+      const proposta = doc.splitTextToSize(textoProposta, 170)
+      doc.setFontSize(10)
+      // doc.setTextColor(0, 137, 123)
+      doc.setTextColor(216, 27, 96)
+      doc.text(20, this.posX, proposta)
 
       this.posX += 18
       // Adiciona página
@@ -874,6 +961,7 @@ export default {
       this.acombinar = false
       this.date = new Date().toISOString().substr(0, 10)
       this.time = this.horaAtual()
+      this.posX = 68
     },
     decimal () {
       if (this.un === '') { return }

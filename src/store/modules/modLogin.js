@@ -365,7 +365,8 @@ const actions = {
             margem: obj[key].margem,
             processamento: obj[key].processamento,
             formasPgto: obj[key].formasPgto,
-            photo: obj[key].photo
+            photo: obj[key].photo,
+            validade: obj[key].validade
           })
         }
         commit('loadConfig', config[0])
@@ -377,7 +378,8 @@ const actions = {
       margem: payload.margem,
       processamento: payload.processamento,
       formasPgto: payload.formasPgto,
-      photo: payload.photo
+      photo: payload.photo,
+      validade: payload.validade
     }
     const uid = state.user.id
     let key
@@ -490,6 +492,9 @@ const mutations = {
     }
     if (payload.photo) {
       state.config.photo = payload.photo
+    }
+    if (payload.validade) {
+      state.config.validade = payload.validade
     }
   },
   clearError: (state) => {

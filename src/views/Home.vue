@@ -55,7 +55,8 @@ export default {
           margem: 3,
           processamento: 1.3,
           formasPgto: '',
-          photo: ''
+          photo: '',
+          validade: 1
         }
         this.$store.dispatch('createConfig', config)
       }
