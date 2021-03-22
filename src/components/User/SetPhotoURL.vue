@@ -102,6 +102,9 @@ export default {
   watch: {
     user () {
       this.user = this.$store.getters.user
+    },
+    config () {
+      this.photo = this.config.photo
     }
   },
   data () {
@@ -115,6 +118,7 @@ export default {
   },
   methods: {
     cancelarPhoto () {
+      this.salvando = false
       this.arquivo = null
       this.photo = this.config ? this.config.photo : ''
       this.$store.dispatch('setDialogPhoto', false)
@@ -162,7 +166,7 @@ export default {
         this.$store.dispatch('setPhoto', nova)
         setTimeout(() => {
           this.cancelarPhoto()
-        }, 4000)
+        }, 2000)
       }
     }
   }

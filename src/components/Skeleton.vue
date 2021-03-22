@@ -1,0 +1,28 @@
+<template>
+  <div>
+    <v-skeleton-loader
+      class="mb-2"
+      :boilerplate="false"
+      :elevation="0"
+      type="list-item-avatar-two-line"
+    ></v-skeleton-loader>
+    <v-skeleton-loader
+      class="mb-2"
+      :boilerplate="false"
+      :elevation="0"
+      type="list-item-avatar-two-line"
+    ></v-skeleton-loader>
+    <v-skeleton-loader
+      class="mb-2"
+      :boilerplate="false"
+      :elevation="0"
+      type="list-item-avatar-two-line"
+    ></v-skeleton-loader>
+    <v-skeleton-loader
+      class="mb-2"
+      :boilerplate="false"
+      :elevation="0"
+      type="list-item-avatar-two-line"
+    ></v-skeleton-loader>
+  </div>
+</template>

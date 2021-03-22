@@ -1,78 +1,84 @@
 <template>
-  <v-container class="receita">
-
-        <v-row class="justify-center">
-          <v-col cols="12" sm="6" class="mx-0 px-0">
-            <v-row class="justify-center">
-            <v-toolbar
-              elevation="0"
-              color="white"
-              style="position: fixed; top: 56px; width: 100vh; z-index: 20;"
+  <div id="receita">
+    <v-container>
+      <v-row class="justify-center">
+        <v-col cols="12" sm="6" class="mx-0 px-0">
+          <v-row class="justify-center">
+          <v-toolbar
+            elevation="0"
+            color="white"
+            style="position: fixed; top: 56px; width: 100vh; z-index: 20;"
+          >
+            <v-text-field
+              color="teal lighten-3"
+              :cache-items="false"
+              hide-no-data
+              hide-details
+              solo-inverted
+              prepend-inner-icon="mdi-cupcake"
+              append-icon="mdi-magnify"
+              name="search"
+              label="Receita"
+              id="search"
+              v-model="search"
+              flat
+              clearable
+            ></v-text-field>
+            <v-spacer></v-spacer>
+            <v-btn
+              icon
+              color="success"
+              router
+              to="/receita/new"
             >
-              <v-text-field
-                color="teal lighten-3"
-                :cache-items="false"
-                hide-no-data
-                hide-details
-                solo-inverted
-                prepend-inner-icon="mdi-cupcake"
-                append-icon="mdi-magnify"
-                name="search"
-                label="Receita"
-                id="search"
-                v-model="search"
-                flat
-                clearable
-              ></v-text-field>
-              <v-spacer></v-spacer>
-              <v-btn
-                icon
-                color="success"
-                router
-                to="/receita/new"
-              >
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
-            </v-toolbar>
-            </v-row>
-          </v-col>
-        </v-row>
-
-    <v-row class="justify-center">
+              <v-icon>mdi-plus</v-icon>
+            </v-btn>
+          </v-toolbar>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row v-if="loading" class="justify-center py-4">
+        <v-col cols="12" sm="6">
+          <esqueleto />
+        </v-col>
+      </v-row>
+      <v-row v-else class="justify-center">
       <v-col cols="12" sm="6" class="pa-3">
         <v-row class="justify-center">
           <v-col cols="12">
             <v-list shaped class="ml-4 mr-2">
-          <v-list-item-group v-model="active" color="success">
-            <v-list-item v-for="receita in receitas" :key="receita.id" aria-selected="active">
-              <v-list-item-content @click="alterar(receita)">
-                <v-list-item-title :id="receita.nome" v-text="receita.nome"></v-list-item-title>
-                <v-list-item-subtitle>
-                  {{ receita.rendimento }}
-                  {{ receita.rendUnid }}
-                  <span v-if="receita.rendimento > 1 && receita.total > 0">
-                  {{ ' x ' }}
-                    {{ decimal(receita.total / receita.rendimento) }}
-                  {{ ' = ' }}
-                  </span>
-                  {{ 'R$ ' }}{{ decimal(receita.total) }}
-                </v-list-item-subtitle>
-              </v-list-item-content>
-              <v-list-item-action>
-                <v-btn
-                  icon
-                  @click="excluir(receita)"
-                >
-                  <v-icon color="grey">mdi-trash-can-outline</v-icon>
-                </v-btn>
-              </v-list-item-action>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
+              <v-list-item-group v-model="active" color="success">
+                <v-list-item v-for="receita in receitas" :key="receita.id" aria-selected="active">
+                  <v-list-item-content @click="alterar(receita)">
+                    <v-list-item-title :id="receita.nome" v-text="receita.nome"></v-list-item-title>
+                    <v-list-item-subtitle>
+                      {{ receita.rendimento }}
+                      {{ receita.rendUnid }}
+                      <span v-if="receita.rendimento > 1 && receita.total > 0">
+                      {{ ' x ' }}
+                        {{ decimal(receita.total / receita.rendimento) }}
+                      {{ ' = ' }}
+                      </span>
+                      {{ 'R$ ' }}{{ decimal(receita.total) }}
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-action>
+                    <v-btn
+                      icon
+                      @click="excluir(receita)"
+                    >
+                      <v-icon color="grey">mdi-trash-can-outline</v-icon>
+                    </v-btn>
+                  </v-list-item-action>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
-  </v-col>
-</v-row>
+  </v-container>
+
   <template>
     <v-dialog
       v-model="dialog"
@@ -105,19 +111,16 @@
     </v-dialog>
   </template>
 
-  </v-container>
+  </div>
 </template>
 
 <script>
+import esqueleto from '../../components/Skeleton'
 
 export default {
-  computed: {
-    receitas () {
-      return this.$store.getters.searchReceitas
-    },
-    base () {
-      return this.$store.getters.receitas
-    }
+  name: 'receita',
+  components: {
+    esqueleto
   },
   watch: {
     base () {
@@ -131,14 +134,21 @@ export default {
     }
   },
   mounted () {
-    // valor inicial do search
-    this.$store.dispatch('setSearch1', '')
+    setTimeout(() => {
+      // valor inicial do search
+      this.$store.dispatch('setSearch1', '')
+      this.receitas = this.$store.getters.searchReceitas
+      this.base = this.$store.getters.receitas
+      this.loading = false
+    }, 1000)
   },
   data () {
     return {
+      receitas: [],
+      base: [],
+      loading: true,
       active: '',
       dialog: false,
-      loading: false,
       remover: '',
       items: [],
       select: 'null',

@@ -693,8 +693,9 @@ export default {
     setEnd (duracao, now, hora) {
       const date = new Date(now).toISOString().substr(0, 10)
       const start = new Date(date + ' ' + hora)
-      const tempo = (duracao * 24 * 60 * 60 * 1000)
-      const dia = new Date(start.getTime() + tempo)
+      const dia = new Date()
+      dia.setTime(start.getTime() + (duracao * 24 * 60 * 60 * 1000))
+      // alert('Conversão: ' + !!Date.prototype.toISOString + ' ( ' + date + ' || ' + dia + ' || ' + dia.toUTCString() + ' ) ')
       let d = dia.getDate().toString()
       d = d.length > 1 ? d : '0' + d
       let mo = (dia.getMonth() + 1).toString()
@@ -706,6 +707,9 @@ export default {
       m = m.length > 1 ? m : '0' + m
       const end = dt + ' ' + h + ':' + m + 'h'
       return end
+    },
+    setValidade (validade) {
+      return 'Este orçamento será válido por ' + validade + ' dias a contar de sua emissão.'
     },
     gerarPDF () {
       this.loading = true
@@ -719,7 +723,8 @@ export default {
       const now = new Date()
       const hora = this.horaAtual() + ':' + now.getSeconds()
       const dataHora = this.formatDate(now.toISOString().substr(0, 10)) + ' ' + hora
-      const aguardar = this.setEnd(validade, now, hora)
+      // const aguardar = this.setEnd(validade, now, hora)
+      const aguardar = this.setValidade(validade)
 
       // eslint-disable-next-line new-cap
       const doc = new jsPDF({
@@ -849,7 +854,7 @@ export default {
         doc.addPage([210, 297], 'portrait')
       }
 
-      const textoProposta = 'Aguardaremos sua aprovação até ' + aguardar + '. Depois disso o orçamento perderá a validade.'
+      const textoProposta = aguardar
 
       const proposta = doc.splitTextToSize(textoProposta, 170)
       doc.setFontSize(10)

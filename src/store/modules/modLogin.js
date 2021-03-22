@@ -65,7 +65,6 @@ const actions = {
   },
   stateChanged ({ commit }) {
     firebase.auth().onAuthStateChanged((user) => {
-      console.log('change: ' + user)
       const newUser = {
         id: user.uid,
         email: user.email,

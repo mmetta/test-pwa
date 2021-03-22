@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app id="App" data-server-rendered="true">
     <appbar />
     <v-main>
       <router-view></router-view>
@@ -15,13 +15,13 @@ export default {
   components: {
     appbar
   },
-  // created () {
+  created () {
   //   this.$firebase.auth().onAuthStateChanged((user) => {
   //     if (user) {
   //       this.$store.dispatch('autoSignIn', user)
   //     }
   //   })
-  // },
+  },
   data: () => ({
     //
   })

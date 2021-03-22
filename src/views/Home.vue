@@ -1,27 +1,28 @@
 <template>
-  <div>
-    <v-row class="justify-center">
-      <v-col cols="8">
-        <v-row class="justify-center">
-          <v-img max-width="68px" max-height="68px" src="../assets/Sc-192.png"></v-img>
-        </v-row>
-        <v-row class="justify-center">
-          <strong class="logo grey--text">SEU</strong><span class="logo grey--text">CUSTO</span>
-        </v-row>
-        <v-row class="justify-center">
-          <span class="grey--text">{{ user.email }}</span>
-        </v-row>
-      </v-col>
-    </v-row>
+  <div id="Home">
+    <v-container>
+      <v-row class="justify-center">
+        <v-col cols="8">
+          <v-row class="justify-center">
+            <v-img max-width="68px" max-height="68px" src="../assets/Sc-192.png"></v-img>
+          </v-row>
+          <v-row class="justify-center">
+            <strong class="logo grey--text">SEU</strong><span class="logo grey--text">CUSTO</span>
+          </v-row>
+          <v-row class="justify-center">
+            <span class="grey--text">{{ user.email }}</span>
+          </v-row>
+        </v-col>
+      </v-row>
 
-    <!-- BOTÕES PARA INSTALAR (IOS e ANDROID) -->
-    <v-row v-if="isIos(userAgent) && !this.winStandalone" class="justify-center">
-      <installios />
-    </v-row>
-    <v-row v-if="!isIos(userAgent) && !this.winStandalone" class="justify-center">
-      <install />
-    </v-row>
-
+      <!-- BOTÕES PARA INSTALAR (IOS e ANDROID) -->
+      <v-row v-if="isIos(userAgent) && !this.winStandalone" class="justify-center">
+        <installios />
+      </v-row>
+      <v-row v-if="!isIos(userAgent) && !this.winStandalone" class="justify-center">
+        <install />
+      </v-row>
+    </v-container>
   </div>
 </template>
 
@@ -44,7 +45,11 @@ export default {
     }
   },
   created () {
-    this.$store.dispatch('loadConfig')
+    this.$firebase.auth().onAuthStateChanged((user) => {
+      if (user !== null && user !== undefined) {
+        this.$store.dispatch('loadConfig')
+      }
+    })
   },
   watch: {
     config (n) {

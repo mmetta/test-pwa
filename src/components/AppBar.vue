@@ -2,7 +2,7 @@
   <div v-if="user">
     <v-app-bar elevation="0" height="55px" color="primary" dark app>
       <v-app-bar-nav-icon @click="toggle=!toggle"></v-app-bar-nav-icon>
-      <v-toolbar-title><strong>SEU</strong><span>CUSTO</span></v-toolbar-title>
+      <v-toolbar-title><strong>SEU</strong><span @click="ir('/')">CUSTO</span></v-toolbar-title>
       <v-spacer></v-spacer>
       <!-- <v-btn icon>
         <v-icon small>mdi-bell</v-icon>
