@@ -6,11 +6,19 @@
           <app-alert @dismissed="onDismissed" :text="error"></app-alert>
         </v-col>
       </v-row>
-      <v-row v-if="verificando" style="padding-top: 74px" class="justify-center">
+      <v-row v-if="verificando" style="padding-top: 124px" class="justify-center">
+
           <v-col cols="12" sm="6">
             <!-- <v-row class="justify-center mb-2">
               <v-img max-width="102px" max-height="102px" src="../../assets/Sc-192.png"></v-img>
             </v-row> -->
+            <v-row class="justify-center my-4">
+              <v-progress-circular
+                :size="44"
+                color="success"
+                indeterminate
+              ></v-progress-circular>
+            </v-row>
             <v-row class="justify-center">
               <strong class="logo grey--text">SEU</strong><span class="logo grey--text">CUSTO</span>
             </v-row>
@@ -18,6 +26,7 @@
               <strong class="grey--text">Aguarde...</strong>
             </v-row>
           </v-col>
+
       </v-row>
       <v-row v-else class="justify-center">
         <v-col cols="12" sm="6">

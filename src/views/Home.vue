@@ -1,7 +1,7 @@
 <template>
   <div id="Home">
     <v-container>
-      <v-row class="justify-center">
+      <v-row class="justify-center" style="padding-top: 104px">
         <v-col cols="8">
           <v-row class="justify-center">
             <v-img max-width="68px" max-height="68px" src="../assets/Sc-192.png"></v-img>

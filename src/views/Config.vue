@@ -10,12 +10,19 @@
       </v-row>
         <v-row v-if="loading" class="justify-center my-4">
           <v-col cols="10" sm="6">
-            <v-skeleton-loader
+            <!-- <v-skeleton-loader
               class="mb-5"
               :boilerplate="false"
               :elevation="0"
               type="list-item-two-line, actions"
-            ></v-skeleton-loader>
+            ></v-skeleton-loader> -->
+            <v-row class="justify-center my-2">
+              <v-progress-circular
+                :size="36"
+                color="success"
+                indeterminate
+              ></v-progress-circular>
+            </v-row>
           </v-col>
         </v-row>
         <v-row v-else class="justify-center my-4">
@@ -62,12 +69,13 @@
       <div v-if="loading">
         <v-row class="justify-center my-4">
           <v-col cols="10" sm="6">
-            <v-skeleton-loader
-              class="mb-5"
-              :boilerplate="false"
-              :elevation="0"
-              type="paragraph"
-            ></v-skeleton-loader>
+            <v-row class="justify-center my-2">
+              <v-progress-circular
+                :size="36"
+                color="success"
+                indeterminate
+              ></v-progress-circular>
+            </v-row>
           </v-col>
         </v-row>
       </div>
@@ -161,12 +169,13 @@
         <div v-if="loading">
           <v-row class="justify-center my-4">
             <v-col cols="10" sm="6">
-              <v-skeleton-loader
-                class="mb-5"
-                :boilerplate="false"
-                :elevation="0"
-                type="card"
-              ></v-skeleton-loader>
+              <v-row class="justify-center my-2">
+                <v-progress-circular
+                  :size="36"
+                  color="success"
+                  indeterminate
+                ></v-progress-circular>
+              </v-row>
             </v-col>
           </v-row>
         </div>
