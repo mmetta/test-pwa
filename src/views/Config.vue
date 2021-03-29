@@ -19,7 +19,7 @@
             <v-row class="justify-center my-2">
               <v-progress-circular
                 :size="36"
-                color="success"
+                color="secondary"
                 indeterminate
               ></v-progress-circular>
             </v-row>
@@ -72,7 +72,7 @@
             <v-row class="justify-center my-2">
               <v-progress-circular
                 :size="36"
-                color="success"
+                color="secondary"
                 indeterminate
               ></v-progress-circular>
             </v-row>
@@ -172,7 +172,7 @@
               <v-row class="justify-center my-2">
                 <v-progress-circular
                   :size="36"
-                  color="success"
+                  color="secondary"
                   indeterminate
                 ></v-progress-circular>
               </v-row>
@@ -279,10 +279,11 @@ export default {
     setTimeout(() => {
       this.formasPgto = this.pgto
       this.loading = false
-    }, 2000)
+    }, 1000)
   },
   data () {
     return {
+      idImg: '',
       loading: true,
       formasPgto: '',
       diasValidade: this.validade || 1,

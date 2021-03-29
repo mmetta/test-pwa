@@ -195,14 +195,14 @@ export default {
   },
   mounted () {
     this.tipo = '1'
+    this.$store.dispatch('setSearch', '')
+    this.insumos = this.$store.getters.searchInsumos
     // tempo para mostrar esqueleto
     setTimeout(() => {
       // valor inicial do search
-      this.$store.dispatch('setSearch', '')
-      this.insumos = this.$store.getters.searchInsumos
       this.basica = this.$store.getters.config.basica || false
       this.loading = false
-    }, 1000)
+    }, 600)
     // console.log(window.outerWidth)
   },
   data () {

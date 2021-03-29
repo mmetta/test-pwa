@@ -15,7 +15,7 @@
             <v-row class="justify-center my-4">
               <v-progress-circular
                 :size="44"
-                color="success"
+                color="secondary"
                 indeterminate
               ></v-progress-circular>
             </v-row>
@@ -201,8 +201,6 @@
 </template>
 
 <script>
-
-console.log('renderizando')
 
 export default {
   name: 'login',

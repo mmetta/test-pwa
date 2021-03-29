@@ -134,13 +134,13 @@ export default {
     }
   },
   mounted () {
+    // valor inicial do search
+    this.$store.dispatch('setSearch1', '')
+    this.receitas = this.$store.getters.searchReceitas
+    this.base = this.$store.getters.receitas
     setTimeout(() => {
-      // valor inicial do search
-      this.$store.dispatch('setSearch1', '')
-      this.receitas = this.$store.getters.searchReceitas
-      this.base = this.$store.getters.receitas
       this.loading = false
-    }, 1000)
+    }, 600)
   },
   data () {
     return {
