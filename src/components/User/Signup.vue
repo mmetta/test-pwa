@@ -119,6 +119,7 @@ export default {
           margem: 3,
           processamento: 1.3,
           formasPgto: 'Metade do valor na aprovação do orçamento e o restante no ato da entrega. Aceitamos cartões de débito, crédito (1x) e PicPay.',
+          validade: 1,
           photo: ''
         }
         this.$store.dispatch('createConfig', config)
