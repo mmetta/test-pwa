@@ -44,7 +44,19 @@
       </v-row>
       <v-row v-else class="justify-center">
         <v-col cols="12" sm="6">
-          <v-list shaped class="ml-4 mr-2">
+          <v-list v-if="insumos.length < 1" shaped class="ml-4 mr-2">
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title>
+                  Nenhum insumo, clique em <v-icon color="success">mdi-plus</v-icon> para cadastrar
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  ou importe <v-icon small color="success">mdi-download</v-icon> a lista básica
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+          <v-list v-else shaped class="ml-4 mr-2">
             <v-list-item-group v-model="active" color="success">
               <v-list-item v-for="insumo in insumos" :key="insumo.id" aria-selected="active">
                 <v-list-item-content @click="alterar(insumo)">
@@ -188,9 +200,6 @@ export default {
     },
     insumos (value) {
       return value
-    },
-    basica (value) {
-      console.log(value)
     }
   },
   mounted () {

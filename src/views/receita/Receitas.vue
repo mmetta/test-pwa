@@ -46,7 +46,19 @@
       <v-col cols="12" sm="6" class="pa-3">
         <v-row class="justify-center">
           <v-col cols="12">
-            <v-list shaped class="ml-4 mr-2">
+            <v-list v-if="receitas.length < 1" shaped class="ml-4 mr-2">
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    Nenhuma receita no momento
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    clique em <v-icon color="success">mdi-plus</v-icon> para cadastrar
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+            <v-list v-else shaped class="ml-4 mr-2">
               <v-list-item-group v-model="active" color="success">
                 <v-list-item v-for="receita in receitas" :key="receita.id" aria-selected="active">
                   <v-list-item-content @click="alterar(receita)">
