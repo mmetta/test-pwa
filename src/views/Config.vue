@@ -180,8 +180,11 @@
           </v-row>
         </div>
         <div v-else>
-          <v-row class="justify-center">
-            <v-img id="myImg" max-width="120" max-height="120" :src="ph" alt="sua imagem" />
+          <v-row v-if="!ph" class="justify-center">
+            <v-img max-width="120" max-height="120" src="../assets/sem-imagem.png" alt="sem imagem" />
+          </v-row>
+          <v-row v-else class="justify-center">
+            <v-img id="myImg" max-width="120" max-height="120" :src="ph" alt="Sua imagem" />
           </v-row>
         <v-row class="justify-center my-4">
             <v-btn
