@@ -7,6 +7,8 @@ const state = {
   insumos: [],
   importInsumos: [],
   searchInsumos: [],
+  buscaPreco: [],
+  termos: [],
   search: '',
   logged: 'Conectado'
 }
@@ -17,6 +19,12 @@ const getters = {
   },
   importInsumos (state) {
     return state.importInsumos
+  },
+  buscaPreco (state) {
+    return state.buscaPreco
+  },
+  termos (state) {
+    return state.termos
   },
   insumo (state) {
     return (insumoId) => {
@@ -71,6 +79,51 @@ const actions = {
             })
           }
           commit('setLoadedImportInsumos', insumos)
+        })
+        .catch(
+          (error) => {
+            console.log(error)
+          }
+        )
+    }
+  },
+  loadBuscaPreco ({ commit }) {
+    if (Store.state.user) {
+      firebase.database().ref('/Mercado/buscaPreco').once('value')
+        .then((data) => {
+          const items = []
+          const obj = data.val()
+          for (const key in obj) {
+            items.push({
+              id: key,
+              consult: obj[key].consult,
+              local: obj[key].local,
+              produto: obj[key].produto,
+              valor: obj[key].valor
+            })
+          }
+          commit('setLoadBuscaPreco', items)
+        })
+        .catch(
+          (error) => {
+            console.log(error)
+          }
+        )
+    }
+  },
+  loadTermos ({ commit }) {
+    if (Store.state.user) {
+      firebase.database().ref('/Mercado/termos').once('value')
+        .then((data) => {
+          const items = []
+          const obj = data.val()
+          for (const key in obj) {
+            items.push({
+              id: key,
+              nome: obj[key].nome
+            })
+          }
+          commit('setLoadTermos', items)
         })
         .catch(
           (error) => {
@@ -167,6 +220,12 @@ const mutations = {
   },
   setLoadedImportInsumos (state, payload) {
     state.importInsumos = ordenarPtBr(payload, 'nome')
+  },
+  setLoadBuscaPreco (state, payload) {
+    state.buscaPreco = ordenarPtBr(payload, 'produto')
+  },
+  setLoadTermos (state, payload) {
+    state.termos = ordenarPtBr(payload, 'nome')
   },
   createInsumo (state, payload) {
     // state.insumos.push(payload)

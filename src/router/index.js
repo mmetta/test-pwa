@@ -15,15 +15,15 @@ import Custo from '../views/orcamento/Custos.vue'
 import SaveOrcamento from '../views/orcamento/SaveOrcamento.vue'
 import Donativo from '../views/Donativo.vue'
 import Config from '../views/Config.vue'
-import Teste from '../views/orcamento/TesteTabela.vue'
+import Busca from '../views/preco/buscaPreco.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/teste',
-    name: 'Teste',
-    component: Teste
+    path: '/busca',
+    name: 'Busca',
+    component: Busca
   },
   {
     path: '/',

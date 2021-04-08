@@ -73,6 +73,7 @@ export default {
       // { name: 'Orçamento', icon: 'mdi-clipboard-list-outline', path: '/orcamento' },
       { name: 'Orçamento', icon: 'mdi-clipboard-list-outline', path: '/orcamento/0' },
       { name: 'Calculadora', icon: 'mdi-calculator', path: '/calculadora' },
+      { name: 'Busca preços', icon: 'mdi-magnify', path: '/busca' },
       { name: 'Donativo', icon: 'mdi-currency-usd', path: '/donativo' }
     ]
   }),
